@@ -1,0 +1,19 @@
+{
+  "name": "edubectom",
+  "version": "1.0.0",
+  "description": "- **Team**   - Eduardo Becerra Tomé (https://github.com/edubectom)   - Mario Tur Pantión (https://github.com/mariotuur)   - Antonio Manuel Luque Molina (https://github.com/antluqmol1) - **Project description**: Our information sources focus on analyzing the evolution of aid for dependent individuals in Spain, examining key aspects such as social and economic support systems. - **Repository**: [gti-sos/SOS2425-11](https://github.com/gti-sos/SOS2425-11) - **URL**: TBD -  **APIs**:     - TBD     - TBD        - TBD",
+  "main": "index-EBT.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gti-sos/SOS2425-11.git"
+  },
+  "author": "Eduardo Becerra Tomé",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gti-sos/SOS2425-11/issues"
+  },
+  "homepage": "https://github.com/gti-sos/SOS2425-11#readme"
+}
