@@ -19,7 +19,7 @@ data.forEach(item =>{
     if(item.place == "Cadiz"){
         sumaTotalCadiz+= item.age + item.legal_residence + item.economical_resource + item.incompatible_benefit;
         contador++;
-    }
+    } 
 });
 
 const mediaAnualCadiz = sumaTotalCadiz/contador;
