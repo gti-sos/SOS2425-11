@@ -23,4 +23,4 @@ data.forEach(item =>{
 });
 
 const mediaAnualCadiz = sumaTotalCadiz/contador;
-console.log(`La media anual de pensiones para personas con discapacidad rechazadas en Cadiz es de ${mediaAnualCadiz} pensiones.`);
+console.log(`La media anual de pensiones rechazadas para personas con discapacidad en Cadiz es de ${mediaAnualCadiz} pensiones.`);
