@@ -11,17 +11,5 @@ let data = [
     { year: 2024, place: "Castilla-La Mancha", retirement_amount: 79494755.07, disability_amount: 66411366.10, retirement_number: 11333, disability_number: 8260 }
   ];
 
-let totalRetirementAmount = 0;
-let count = 0;
-
-data.forEach(item => {
-    if (item.place === "Andalucía") {
-        totalRetirementAmount += item.retirement_amount;
-        count++;
-    }
-});
-
-const Media_Jubilación_Andalucía = totalRetirementAmount / count;
-console.log(`La media de la jubilación en Andalucía es ${Media_Jubilación_Andalucía} euros`);
 
 module.exports = data;
