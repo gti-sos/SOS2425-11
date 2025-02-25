@@ -12,6 +12,12 @@ app.get('/cool', (request, response) =>{
 }
 );
 
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+}
+);
+
+
 let totalRetirementAmount = 0;
 let count = 0;
 
@@ -25,6 +31,6 @@ data.forEach(item => {
 const Media_Jubilación_Andalucía = totalRetirementAmount / count;
 
 app.get('/samples/EBT', (request, response) =>{
-    response.send(Media_Jubilación_Andalucía);
+    response.send(`La media de la jubilación en Andalucía es ${Media_Jubilación_Andalucía} euros`);
 }
 );
