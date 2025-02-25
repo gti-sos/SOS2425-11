@@ -1,4 +1,4 @@
-const data = [
+let data = [
     { year: 2024, place: "Andalucía", retirement_amount: 404470097.10, disability_amount: 302847557.70, retirement_number: 55139, disability_number: 36988 },
     { year: 2023, place: "Andalucía", retirement_amount: 364941392.88, disability_amount: 289993223.80, retirement_number: 53548, disability_number: 37922 },
     { year: 2022, place: "Andalucía", retirement_amount: 341025190.16, disability_amount: 282109979.85, retirement_number: 53634, disability_number: 39447 },
@@ -23,3 +23,5 @@ data.forEach(item => {
 
 const Media_Jubilación_Andalucía = totalRetirementAmount / count;
 console.log(`La media de la jubilación en Andalucía es ${Media_Jubilación_Andalucía} euros`);
+
+module.exports = data;
