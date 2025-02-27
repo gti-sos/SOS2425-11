@@ -7,13 +7,16 @@ const PORT = process.env.PORT || 16078;
 app.use("/about", express.static(__dirname + "/public/about.html"));
 
 app.get('/', (request, response) =>{
-    response.send('Este es el servidor del <a href="/about">grupo 11</a>');
+    response.send(`Este es el servidor del <a href="/about">grupo 11</a><br>
+        <a href="/cool">Cool</a><br>
+        <a href="/samples/EBT">Algoritmo EBT</a>`);
 }
 );
 
 
 app.get('/cool', (request, response) =>{
-    response.send(cool());
+    let caritas = cool();
+    response.send(`${caritas}<br><a href="/">Volver</a>`);
 }
 );
 
@@ -36,6 +39,7 @@ data.forEach(item => {
 const Media_Jubilación_Andalucía = totalRetirementAmount / count;
 
 app.get('/samples/EBT', (request, response) =>{
-    response.send(`La media de la jubilación en Andalucía es ${Media_Jubilación_Andalucía} euros`);
+    response.send(`La media de la jubilación en Andalucía es ${Media_Jubilación_Andalucía} euros <br>
+        <a href="/">Volver</a>`);
 }
 );
