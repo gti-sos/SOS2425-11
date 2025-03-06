@@ -37,22 +37,4 @@ const data = [
     { year: 2023, place: "Ceuta y Melilla", population: 168287, dependent_population: 22272, request: 5237 }
 ];
 
-// Filtramos los datos del año 2024 con dependent_population superior al 15% de population
-const filteredData = data.filter(item => 
-    item.year === 2024 && (item.dependent_population / item.population) > 0.15
-);
-
-// Calculamos la media de la población dependiente usando map y reduce
-const totalDependentPopulation = filteredData.map(item => item.dependent_population)
-    .reduce((sum, value) => sum + value, 0);
-
-// Calculamos la media de la población usando map y reduce
-const totalPopulation = filteredData.map(item => item.population)
-    .reduce((sum, value) => sum + value, 0);
-
-const averageDependentPopulation = totalDependentPopulation / filteredData.length;
-const averagePercentageDependentPopulation = totalDependentPopulation / totalPopulation;
-
-console.log("Datos filtrados de la población dependiente en las regiones cuya dependencia supera el 15% en el último año: \n", filteredData);
-
-console.log(`La media de esta población dependiente de los datos filtrados es de ${averageDependentPopulation.toFixed(2)} personas, que corresponde al ${averagePercentageDependentPopulation.toFixed(2)}% respecto a la población total.`);
+module.exports = data;
