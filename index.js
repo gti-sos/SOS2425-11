@@ -1,4 +1,5 @@
-const data = require('./index-EBT.js');
+const dataEBT = require('./index-EBT.js');
+const dataALM = require('./index-ALM.js');
 const express = require('express');
 const cool = require('cool-ascii-faces');
 const app = express();
@@ -9,7 +10,8 @@ app.use("/about", express.static(__dirname + "/public/about.html"));
 app.get('/', (request, response) =>{
     response.send(`Este es el servidor del <a href="/about">grupo 11</a><br>
         <a href="/cool">Cool</a><br>
-        <a href="/samples/EBT">Algoritmo EBT</a>`);
+        <a href="/samples/EBT">Algoritmo EBT</a>
+        <a href="/samples/ALM">Algoritmo ALM</a>`);
 }
 );
 
@@ -29,7 +31,7 @@ app.listen(PORT, () => {
 let totalRetirementAmount = 0;
 let count = 0;
 
-data.forEach(item => {
+dataEBT.forEach(item => {
     if (item.place === "Andalucía") {
         totalRetirementAmount += item.retirement_amount;
         count++;
@@ -46,7 +48,7 @@ app.get('/samples/EBT', (request, response) =>{
 
 // Algoritmo Antonio:
 // Filtramos los datos del año 2024 con dependent_population superior al 15% de population
-const filteredData = data.filter(item => 
+const filteredData = dataALM.filter(item => 
     item.year === 2024 && (item.dependent_population / item.population) > 0.15
 );
 
