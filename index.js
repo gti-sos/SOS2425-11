@@ -9,6 +9,7 @@ const RESOURCE_ALM = "autonomy-dependence-applications";
 
 
 app.use("/about", express.static(__dirname + "/public/about.html"));
+app.use(express.json()); // Habilita el parsing de JSON en las peticiones
 
 app.get('/', (request, response) =>{
     response.send(`Este es el servidor del <a href="/about">grupo 11</a><br>
