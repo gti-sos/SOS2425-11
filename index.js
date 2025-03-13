@@ -113,7 +113,7 @@ app.delete(BASE_API + `/${RESOURCE_ALM}`, (request, response) => {
 });
 
 //PUT -> DEVUELVE ERROR (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS)
-app.put(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
+app.put(BASE_API + `/${RESOURCE_ALM}`, (request, response) => {
     console.log(`New PUT to /${RESOURCE_ALM}/${request.params.place}`);
 
     return response.status(405).json({
