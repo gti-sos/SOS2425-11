@@ -1,5 +1,6 @@
 const dataEBT = require('./index-EBT.js');
 const dataALM = require('./index-ALM.js');
+const dataMTP = require('./index-MTP.js');
 const express = require('express');
 const cool = require('cool-ascii-faces');
 const app = express();
@@ -15,7 +16,8 @@ app.get('/', (request, response) =>{
     response.send(`Este es el servidor del <a href="/about">grupo 11</a><br>
         <a href="/cool">Cool</a><br>
         <a href="/samples/EBT">Algoritmo EBT</a>
-        <a href="/samples/ALM">Algoritmo ALM</a>`);
+        <a href="/samples/ALM">Algoritmo ALM</a>
+        <a href="/samples/MTP">Algoritmo MTP</a>`);
 }
 );
 
@@ -212,7 +214,7 @@ app.post(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
 
 
 
-
+//#############################################################################################################################################################
 // ~~~~~~~~~~~~~~~~~~~~ ALGORITMOS ~~~~~~~~~~~~~~~~~~~~
 // Algoritmo Edu:
 let totalRetirementAmount = 0;
@@ -232,6 +234,8 @@ app.get('/samples/EBT', (request, response) =>{
         <a href="/">Volver</a>`);
 }
 );
+
+//#############################################################################################################################################################
 
 // Algoritmo Antonio:
 // Filtramos los datos del año 2024 con dependent_population superior al 15% de population
@@ -255,5 +259,25 @@ app.get('/samples/ALM', (request, response) =>{
         <a href="/">Volver</a>`);
 }
 );
+
+//#############################################################################################################################################################
+
+// Algoritmo Mario:
+//Vamos a calcular la media de pensiones rechazadas para personas con discapacidad en Cadiz anual
+let contador = 0;
+let sumaTotalCadiz = 0;
+
+data.forEach(item =>{
+    if(item.place == "Cadiz"){
+        sumaTotalCadiz+= item.age + item.legal_residence + item.economical_resource + item.incompatible_benefit;
+        contador++;
+    } 
+});
+
+const mediaAnualCadiz = sumaTotalCadiz/contador;
+app.get('/samples/MTP', (request, response) =>{
+    response.send(`La media anual de pensiones rechazadas para personas con discapacidad en Cadiz es de ${mediaAnualCadiz} pensiones. <br>
+        <a href="/">Volver</a>`);
+})
 
 // ~~~~~~~~~~~~~~~~~~~~ ----------- ~~~~~~~~~~~~~~~~~~~~

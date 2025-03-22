@@ -1,4 +1,4 @@
-const data = [
+let data = [
 
     {year: 2024, place: "Andalucia", age: 1043, legal_residence: 1634, economical_resource:6836, incompatible_benefit:51},
     {year: 2024, place: "Almeria", age: 153, legal_residence: 267, economical_resource:611, incompatible_benefit:29},
@@ -11,7 +11,7 @@ const data = [
     {year: 2023, place: "Almeria", age: 71, legal_residence: 102, economical_resource:1008, incompatible_benefit:11},
     {year: 2022, place: "Cadiz", age: 39, legal_residence: 193, economical_resource:1032, incompatible_benefit:2}
 ];
-
+/*
 let contador = 0;
 let sumaTotalCadiz = 0;
 
@@ -24,3 +24,6 @@ data.forEach(item =>{
 
 const mediaAnualCadiz = sumaTotalCadiz/contador;
 console.log(`La media anual de pensiones rechazadas para personas con discapacidad en Cadiz es de ${mediaAnualCadiz} pensiones.`);
+*/
+
+module.exports = data;
