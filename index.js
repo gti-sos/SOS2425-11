@@ -292,8 +292,73 @@ app.put(BASE_API + `/${RESOURCE_MTP}`, (request, response) => {
     });
 });
 
+//Gestión de un solo recurso MTP
 
+//GET -> Obtiene datos del recurso place
+app.get(BASE_API+`/${RESOURCE_MTP}/:place`, (request, response) => { // Los : en /:place indica que place es un parámetro dinámico en la URL. Esto significa que la ruta acepta valores variables en esa posición.
+    const placeName = request.params.place;
+    console.log(`New GET to /${RESOURCE_MTP}/${placeName}`)
+    // Filtrar todos los recursos que coincidan con el place
+    const resource = pensions.filter(pension => pension.place === placeName);
+    //Si no hay datos, redirige a /loadInitialData
+    if (resource.length === 0) {
+        return response.status(404).json({ error: "Recurso no encontrado" });
+    }
+    response.send(JSON.stringify(resource, null, 2));
+});
 
+//PUT -> Si existe "recurso" actualiza los datos
+app.put(BASE_API + `/${RESOURCE_MTP}/:place`, (request, response) => {
+    const placeName = request.params.place;
+    console.log(`New PUT to /${RESOURCE_MTP}/${placeName}`);
+    // Filtrar los índices de los recursos que coincidan con placeName
+    const resourceIndexes = pensions
+        .map((pension, index) => pension.place === placeName ? index : -1)
+        .filter(index => index !== -1);
+    if (resourceIndexes.length === 0) {
+        return response.status(404).json({ error: "Recurso no encontrado" });
+    }
+    const newData = request.body;
+    // Validar que se envían datos en el body
+    if (!newData || Object.keys(newData).length === 0) {
+        return response.status(400).json({ error: "Datos inválidos o vacíos en la solicitud" });
+    }
+    // Actualizar todos los recursos que coincidan con el `placeName`
+    resourceIndexes.forEach(index => {
+        pensions[index] = { ...pensions[index], ...newData }; //... es el spread operator que permite combinar 2 objetos
+    });
+    response.json({
+        message: `Recurso(s) con provincia '${placeName}' actualizado(s) correctamente`,
+        updatedResources: pensions.filter(pension => pension.place === placeName)
+    });
+}
+);
+
+//DELETE -> Borra "recurso"
+app.delete(BASE_API+`/${RESOURCE_MTP}/:place`, (request, response) => {
+    const placeName = request.params.place;
+    console.log(`New DELETE to /${RESOURCE_MTP}/${placeName}`);
+    // Filtra los índices de los elementos que coinciden con placeName
+    // Guarda la longitud inicial para comparar
+    const initialLength = pensions.length;
+    // Filtra eliminando elementos que coincidan y le asignamos el resultado a pensions para que se efectúe el DELETE
+    pensions = pensions.filter(pension => pension.place !== placeName);
+    // Si no ha cambiado la longitud significa que no se eliminó nada
+    if (pensions.length === initialLength) {
+        return response.status(404).json({ error: "Recurso no encontrado" });
+    }
+    console.log(`Recursos con place=${placeName} eliminados.`);
+    response.status(200).json({ message: `Recursos con place=${placeName} eliminados correctamente.` });
+});
+
+//POST -> DEVUELVE ERROR (NO SE PUEDE HACER POST A UN RECURSO CONCRETO)
+app.post(BASE_API + `/${RESOURCE_MTP}/:place`, (request, response) => {
+    console.log(`New POST to /${RESOURCE_MTP}/${request.params.place}`);
+
+    return response.status(405).json({
+        error: "Método no permitido. No se puede hacer POST a un recurso concreto."
+    });
+});
 
 
 
