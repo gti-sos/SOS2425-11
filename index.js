@@ -207,7 +207,7 @@ app.post(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
 });
 
 //#############################################################################################################################################################
-//Lista de Recursos Mario:
+//Gestion de una lista de recursos MTP:
 let pensions = dataMTP;
 //let pensions = [];
  
@@ -268,6 +268,32 @@ app.post(BASE_API+`/${RESOURCE_MTP}`, (request, response) => {
     applications.push(newPension);
     response.status(201).json({ message: "Recurso agregado correctamente", data: newPension }); 
 });
+
+// DELETE -> Borra lista de recursos, eliminando todos los datos
+app.delete(BASE_API + `/${RESOURCE_MTP}`, (request, response) => {
+    console.log(`New DELETE to /${RESOURCE_MTP}`);
+
+    // Verifica si ya está vacío
+    if (pensions.length === 0) {
+        return response.status(404).json({ error: "No hay datos para eliminar." });
+    }
+    // Vacía el array
+    pensions = [];
+    console.log("Todos los datos han sido eliminados.");
+    response.status(200).json({ message: "Todos los datos han sido eliminados." });
+});
+
+//PUT -> DEVUELVE ERROR (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS)
+app.put(BASE_API + `/${RESOURCE_MTP}`, (request, response) => {
+    console.log(`New PUT to /${RESOURCE_MTP}/${request.params.place}`);
+
+    return response.status(405).json({
+        error: "Método no permitido. No se puede hacer PUT a una lista de recursos."   
+    });
+});
+
+
+
 
 
 
