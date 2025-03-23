@@ -7,6 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 16078;
 const BASE_API = "/api/v1";
 const RESOURCE_ALM = "autonomy-dependence-applications";
+const RESOURCE_MTP = "management-evolutions-pensions";
 
 
 app.use("/about", express.static(__dirname + "/public/about.html"));
@@ -205,10 +206,68 @@ app.post(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
     });
 });
 
+//#############################################################################################################################################################
+//Lista de Recursos Mario:
+let pensions = dataMTP;
+//let pensions = [];
+ 
+//GET   
+app.get(BASE_API+`/${RESOURCE_MTP}`, (request, response) => {
+    console.log(`New GET to /${RESOURCE_MTP}`)
+
+    //Si no hay datos, redirige a /loadInitialData
+    if (pensions.length == 0) {
+        console.log("No hay datos. Redirigiendo a /loadInitialData...");
+        response.redirect(BASE_API+`/${RESOURCE_MTP}/loadInitialData`);
+        return; //Detiene ejecución para evitar doble respuesta
+    }
+
+    response.send(JSON.stringify(pensions, null, 2));
+});
 
 
+ // GET: Carga 10 datos iniciales en el array de NodeJS si está vacío
+ app.get(BASE_API+`/${RESOURCE_MTP}/loadInitialData`, (request, response) => {
+    console.log(`New GET to /${RESOURCE_MTP}/loadInitialData`)
+    if (pensions.length === 0) {
+        pensions = [
+            { year: 2024, place: "Andalucía", age: 1043, legal_residence: 1634, economical_resource:6836, incompatible_benefit:51 },
+            { year: 2024, place: "Almeria", age: 153, legal_residence: 267, economical_resource:611, incompatible_benefit:29 },
+            { year: 2024, place: "Cadiz", age: 111, legal_residence: 102, economical_resource:695, incompatible_benefit:0 },
+            { year: 2024, place: "Cordoba", age: 78, legal_residence: 135, economical_resource:587, incompatible_benefit:3 },
+            { year: 2024, place: "Sevilla", age: 279, legal_residence: 127, economical_resource:1927, incompatible_benefit:7 },
+            { year: 2023, place: "Teruel", age: 15, legal_residence: 33, economical_resource:74, incompatible_benefit:0 },
+            { year: 2023, place: "Cadiz", age: 189, legal_residence: 674, economical_resource:1649, incompatible_benefit:12 },
+            { year: 2023, place: "Zamora", age: 21, legal_residence: 12, economical_resource:203, incompatible_benefit:2 },
+            { year: 2023, place: "Almeria", age: 71, legal_residence: 102, economical_resource:1008, incompatible_benefit:11 },
+            { year: 2022, place: "Cadiz", age: 39, legal_residence: 193, economical_resource:1032, incompatible_benefit:2 }
+        ];
+        console.log("Datos iniciales cargados correctamente")
+        response.send({ message: "Datos iniciales cargados correctamente", data: pensions });
+    } else {
+        console.log("Datos ya existentes. No se sobreescriben.")
+        response.send({ message: "Los datos ya estaban cargados", data: pensions });
+    }
+});
 
+//POST -- Añadir un nuevo dato
+app.post(BASE_API+`/${RESOURCE_MTP}`, (request, response) => {
+    console.log(`New POST to /${RESOURCE_MTP}`);
+    let newPension = request.body;
+    //Hay que validad que el objeto nuevo contenga todos los campos necesarios
+    if(!newPension.place || !newPension.year || !newPension.age || !newPension.legal_residence || !newPension.economical_resource || !newPension.incompatible_benefit){ 
+        return response.status(400).json({ error: "Faltan datos necesarios en la solicitud." });
+    }
 
+    //Verificar que no exista un recurso con el mismo place y year  
+    const exists = pensions.some(pension => pension.place === newPension.place && pension.year === newPension.year);
+    if(exists){
+        return response.status(409).json({ error: "Ya existe un recurso con el mismo place y year." });
+    }   
+
+    applications.push(newPension);
+    response.status(201).json({ message: "Recurso agregado correctamente", data: newPension }); 
+});
 
 
 
