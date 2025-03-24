@@ -8,6 +8,6 @@
 - **Repository**: [gti-sos/SOS2425-11](https://github.com/gti-sos/SOS2425-11)
 - **URL**: https://sos2425-11.onrender.com/
 -  **APIs**:
-    - TBD
-    - TBD   
-    - TBD
+    - http://sos2425-11.onrender.com/api/v1/autonomy-dependence-applications/docs (developed by Antonio Manuel Luque Molina)
+    - http://sos2425-11.onrender.com/api/v1/social-pension-payrolls/docs (developed by Eduardo Becerra Tomé)   
+    - http://sos2425-11.onrender.com/api/v1/management-evolutions/docs (developed by Mario Tur Pantión)
