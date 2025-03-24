@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 16078;
 const BASE_API = "/api/v1";
 const RESOURCE_ALM = "autonomy-dependence-applications";
 const RESOURCE_MTP = "management-evolutions-pensions";
-const RESOURCE_EBT = "social-pension-payrolls";
+const RESOURCE_EBT = "social-pension-payrolls"; 
 
 
 app.use("/about", express.static(__dirname + "/public/about.html"));
@@ -150,6 +150,15 @@ app.put(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
     const placeName = request.params.place;
     console.log(`New PUT to /${RESOURCE_ALM}/${placeName}`);
 
+    // Filtrar los índices de los recursos que coincidan con placeName
+    const resourceIndexes = applications
+        .map((application, index) => application.place === placeName ? index : -1)
+        .filter(index => index !== -1);
+
+    if (resourceIndexes.length === 0) {
+        return response.status(404).json({ error: "Recurso no encontrado" });
+    }
+
     const newData = request.body;
 
     // Validar que se envían datos en el body
@@ -157,35 +166,14 @@ app.put(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
         return response.status(400).json({ error: "Datos inválidos o vacíos en la solicitud" });
     }
 
-    // Validar que el 'place' del body coincide con el 'place' de la URL
-    if (newData.place !== placeName) {
-        return response.status(400).json({ 
-            error: `El 'place' del body ('${newData.place}') no coincide con el de la URL ('${placeName}')` 
-        });
-    }
+    // Actualizar todos los recursos que coincidan con el `placeName`
+    resourceIndexes.forEach(index => {
+        applications[index] = { ...applications[index], ...newData }; //... es el spread operator que permite combinar 2 objetos
+    });
 
-    // Buscar el índice del recurso
-    const index = applications.findIndex(application => application.place === placeName);
-
-    if (index === -1) {
-        return response.status(404).json({ error: "Recurso no encontrado" });
-    }
-
-
-    // Validar estructura de datos mínima esperada
-    if (typeof newData.year !== 'number' ||
-        typeof newData.population !== 'number' ||
-        typeof newData.dependent_population !== 'number' ||
-        typeof newData.request !== 'number') {
-        return response.status(400).json({ error: "Estructura de datos inválida" });
-    }
-
-    // Actualizar el recurso
-    applications[index] = { ...newData };
-
-    return response.json({
-        message: `Recurso con place '${placeName}' actualizado correctamente`,
-        updatedResource: applications[index]
+    response.json({
+        message: `Recurso(s) con place '${placeName}' actualizado(s) correctamente`,
+        updatedResources: applications.filter(application => application.place === placeName)
     });
 });
 
@@ -333,9 +321,9 @@ app.put(BASE_API + `/${RESOURCE_MTP}/:place`, (request, response) => {
     }
     const newData = request.body;
     // Validar que se envían datos en el body
-    if (!newData || Object.keys(newData).length === 0) {
+    if (newData.place !== placeName || Object.keys(newData).length === 0) {
         return response.status(400).json({ error: "Datos inválidos o vacíos en la solicitud" });
-    }
+    }   
     // Actualizar todos los recursos que coincidan con el `placeName`
     resourceIndexes.forEach(index => {
         pensions[index] = { ...pensions[index], ...newData }; //... es el spread operator que permite combinar 2 objetos
