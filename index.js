@@ -150,35 +150,70 @@ app.put(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
     const placeName = request.params.place;
     console.log(`New PUT to /${RESOURCE_ALM}/${placeName}`);
 
+    // Validar que se envían datos en el body
+    const newData = request.body;
+    if (!newData || Object.keys(newData).length === 0) {
+        return response.status(400).json({ 
+            error: "Datos inválidos o vacíos en la solicitud",
+            details: "El body de la petición no puede estar vacío"
+        });
+    }
+
+    // Validar que el place en el body coincide con el de la URL
+    if (!newData.place) {
+        return response.status(400).json({ 
+            error: "Datos inválidos en la solicitud",
+            details: "El campo 'place' es obligatorio en el body"
+        });
+    }
+
+    if (newData.place !== placeName) {
+        return response.status(400).json({ 
+            error: "Datos inválidos en la solicitud",
+            details: `El 'place' en el body ('${newData.place}') no coincide con el de la URL ('${placeName}')`
+        });
+    }
+
+    // Validar estructura de datos mínima esperada
+    const requiredFields = ['year', 'population', 'dependent_population', 'request'];
+    const missingFields = requiredFields.filter(field => !(field in newData));
+    
+    if (missingFields.length > 0) {
+        return response.status(400).json({ 
+            error: "Estructura de datos inválida",
+            details: `Faltan campos obligatorios: ${missingFields.join(', ')}`
+        });
+    }
+
+    // Validar tipos de datos
+    const invalidTypes = requiredFields.filter(field => typeof newData[field] !== 'number');
+    if (invalidTypes.length > 0) {
+        return response.status(400).json({ 
+            error: "Tipos de datos inválidos",
+            details: `Los siguientes campos deben ser números: ${invalidTypes.join(', ')}`
+        });
+    }
+
     // Filtrar los índices de los recursos que coincidan con placeName
-    const resourceIndexes = amounts
-        .map((amount, index) => amount.place === placeName ? index : -1)
+    const resourceIndexes = applications
+        .map((application, index) => application.place === placeName ? index : -1)
         .filter(index => index !== -1);
 
     if (resourceIndexes.length === 0) {
-        return response.status(404).json({ error: "Recurso no encontrado" });
-    }
-    
-    const newData = request.body;
-
-    // Validar que la localización en el body coincide con la localización en la URL
-    if (newData.place && newData.place !== placeName) {
-        return response.status(400).json({ error: "La localización en el cuerpo de la solicitud no coincide con la localización en la URL." });
-    }
-
-    // Validar que se envían datos en el body
-    if (!newData || Object.keys(newData).length === 0) {
-        return response.status(400).json({ error: "Datos inválidos o vacíos en la solicitud" });
+        return response.status(404).json({ 
+            error: "Recurso no encontrado",
+            details: `No se encontró ningún recurso con place '${placeName}'`
+        });
     }
 
     // Actualizar todos los recursos que coincidan con el `placeName`
     resourceIndexes.forEach(index => {
-        amounts[index] = { ...amounts[index], ...newData }; // ... es el spread operator que permite combinar 2 objetos
+        applications[index] = { ...applications[index], ...newData };
     });
 
-    response.json({
+    response.status(201).json({
         message: `Recurso(s) con place '${placeName}' actualizado(s) correctamente`,
-        updatedResources: amounts.filter(amount => amount.place === placeName)
+        updatedResources: applications.filter(application => application.place === placeName)
     });
 });
 
@@ -211,6 +246,7 @@ app.post(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
         error: "Método no permitido. No se puede hacer POST a un recurso concreto."
     });
 });
+
 
 //#############################################################################################################################################################
 //Gestion de una lista de recursos MTP:
