@@ -324,13 +324,34 @@ app.put(BASE_API + `/${RESOURCE_MTP}/:place`, (request, response) => {
     if (newData.place !== placeName || Object.keys(newData).length === 0) {
         return response.status(400).json({ error: "Datos inválidos o vacíos en la solicitud" });
     }   
-    // Actualizar todos los recursos que coincidan con el `placeName`
-    resourceIndexes.forEach(index => {
-        pensions[index] = { ...pensions[index], ...newData }; //... es el spread operator que permite combinar 2 objetos
-    });
-    response.json({
-        message: `Recurso(s) con provincia '${placeName}' actualizado(s) correctamente`,
-        updatedResources: pensions.filter(pension => pension.place === placeName)
+    // Validar que el 'place' del body coincide con el 'place' de la URL
+    if (newData.place !== placeName) {
+        return response.status(400).json({ 
+            error: `El 'place' del body ('${newData.place}') no coincide con el de la URL ('${placeName}')` 
+        });
+    }
+    // Buscar el índice del recurso
+    const index = applications.findIndex(application => application.place === placeName);
+ 
+    if (index === -1) {
+        return response.status(404).json({ error: "Recurso no encontrado" });
+    }
+
+
+    // Validar estructura de datos mínima esperada
+    if (typeof newData.year !== 'number' ||
+        typeof newData.population !== 'number' ||
+        typeof newData.dependent_population !== 'number' ||
+        typeof newData.request !== 'number') {
+        return response.status(400).json({ error: "Estructura de datos inválida" });
+    }
+
+    // Actualizar el recurso
+    applications[index] = { ...newData };
+
+    return response.json({
+        message: `Recurso con place '${placeName}' actualizado correctamente`,
+        updatedResource: applications[index]
     });
 }
 );
