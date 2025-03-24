@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 16078;
 const BASE_API = "/api/v1";
 const RESOURCE_ALM = "autonomy-dependence-applications";
-const RESOURCE_MTP = "management-evolutions-pensions";
+const RESOURCE_MTP = "management-evolutions";
 const RESOURCE_EBT = "social-pension-payrolls"; 
 
 
