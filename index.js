@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 16078;
 const BASE_API = "/api/v1";
 const RESOURCE_ALM = "autonomy-dependence-applications";
 const RESOURCE_MTP = "management-evolutions-pensions";
-const RESOURCE_EBT = "amount-evolutions-pensions";
+const RESOURCE_EBT = "social-pension-payrolls";
 
 
 app.use("/about", express.static(__dirname + "/public/about.html"));
@@ -580,7 +580,7 @@ app.get('/samples/ALM', (request, response) =>{
 let contador = 0;
 let sumaTotalCadiz = 0;
 
-data.forEach(item =>{
+dataMTP.forEach(item =>{
     if(item.place == "Cadiz"){
         sumaTotalCadiz+= item.age + item.legal_residence + item.economical_resource + item.incompatible_benefit;
         contador++;
