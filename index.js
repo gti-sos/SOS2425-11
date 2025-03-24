@@ -293,8 +293,8 @@ app.put(BASE_API + `/${RESOURCE_MTP}`, (request, response) => {
     });
 });
 
+//#############################################################################################################################################################
 //Gestión de un solo recurso MTP
-
 //GET -> Obtiene datos del recurso place
 app.get(BASE_API+`/${RESOURCE_MTP}/:place`, (request, response) => { // Los : en /:place indica que place es un parámetro dinámico en la URL. Esto significa que la ruta acepta valores variables en esa posición.
     const placeName = request.params.place;
