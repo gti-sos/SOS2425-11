@@ -499,8 +499,13 @@ app.put(BASE_API + `/${RESOURCE_EBT}/:place`, (request, response) => {
     if (resourceIndexes.length === 0) {
         return response.status(404).json({ error: "Recurso no encontrado" });
     }
-
+    
     const newData = request.body;
+
+    // Validar que la localización en el body coincide con la localización en la URL
+    if (newData.place && newData.place !== placeName) {
+        return response.status(400).json({ error: "La localización en el cuerpo de la solicitud no coincide con la localización en la URL." });
+    }
 
     // Validar que se envían datos en el body
     if (!newData || Object.keys(newData).length === 0) {
