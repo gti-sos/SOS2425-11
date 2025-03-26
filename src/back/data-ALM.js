@@ -1,4 +1,4 @@
-const data = [
+let data = [
     { year: 2024, place: "Andalucía", population: 8584147, dependent_population: 1014321, request: 423377 },
     { year: 2024, place: "Aragón", population: 1341289, dependent_population: 186533, request: 57909 },
     { year: 2024, place: "Asturias, Principado de", population: 1006060, dependent_population: 183865, request: 51282 },

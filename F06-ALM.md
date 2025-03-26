@@ -1,5 +1,6 @@
 # ✅ Checklist Feedback F06
 
+# ANTONIO:
 ## 🗂️ Gestión de la Milestone F06 en GitHub
 - [X] Crear milestone "F06" en el repositorio SOS2425-XX con fecha de feedback
 - [X] Crear mínimo 5 issues por cada miembro del equipo
@@ -13,7 +14,9 @@
 - [X] Añadir la URL de Render en el campo “URL” de ambos README
 - [X] Añadir sección “APIs:” en ambos README con los 3 enlaces a la documentación de las APIs
     - [X] Comprobar que cada línea incluye el enlace y el nombre del desarrollador correspondiente
+Para el docs hacer algo similar a: https://documenter.getpostman.com/view/33042302/2sA2xe5uSh
 
+# MARIO:
 ## 🌐 Página de presentación estática en Render
 - [ ] Crear o revisar una página HTML estática que incluya:
     - [ ] Enlace a /about
@@ -32,6 +35,7 @@
 - [ ] Separar la lógica principal del servidor en un módulo independiente de `index.js`
 - [ ] Mantener el código de cada API en módulos separados por desarrollador
 
+# EDU:
 ## ⚙️ Configurar integración continua (CI)
 - [ ] Configurar GitHub Actions o similar para ejecutar `npm test` en cada push
 - [ ] Verificar que al pasar las pruebas aparece el ✅ verde en el commit final antes de la clase de feedback
