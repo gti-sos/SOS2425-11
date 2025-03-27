@@ -3,25 +3,74 @@ const RESOURCE_ALM = "autonomy-dependence-applications";
 
 function loadBackend_ALM(app, db) {
 
-    // GET: Obtiene datos del recurso
+    // GET: Obtiene datos del recurso con búsquedas y paginación opcionales
     app.get(BASE_API+`/${RESOURCE_ALM}`, (request, response) => {
-        console.log(`New GET to /${RESOURCE_ALM}`)
-        // Buscar todos los recursos en la base de datos
-        db.find({}, (err, applications) => {
-            // Manejo de errores
-            if (err) {
-                console.error('Error:', err);
-                return response.status(500).send("Internal Error");
-            }
-            // Si no hay datos, redirige a /loadInitialData
-            if (!applications || applications.length === 0) {
-                console.log("No data found, redirecting to loadInitialData");
-                return response.redirect(BASE_API+`/${RESOURCE_ALM}/loadInitialData`);
-            }
-            // Si hay datos, los enviamos
-            const responseBody = applications.map((a => { delete a._id; return a; }));// Quitamos el _id y si hay más de un elemento, devolver el array normalmente
-            response.status(200).json(responseBody);
-        });
+        console.log(`New GET to /${RESOURCE_ALM}`, request.query);
+        
+        const { 
+            place, 
+            year, 
+            populationOver, 
+            populationUnder,
+            dependentPopulationOver,
+            dependentPopulationUnder,
+            requestOver,
+            requestUnder,
+            limit, 
+            offset 
+        } = request.query;
+
+        // Construimos el query para NeDB
+        const query = {}; // Este objeto es lo que NeDB usará para filtrar los documentos
+        
+        // Aplicamos filtros si están presentes
+        if (place) query.place = place;
+        if (year) query.year = parseInt(year);
+        // $gte significa "greater than or equal to" 
+        // $lte significa "less than or equal to"
+        if (populationOver || populationUnder) {
+            query.population = {};
+            if (populationOver) query.population.$gte = parseInt(populationOver);
+            if (populationUnder) query.population.$lte = parseInt(populationUnder);
+        }
+        if (dependentPopulationOver || dependentPopulationUnder) {
+            query.dependent_population = {};
+            if (dependentPopulationOver) query.dependent_population.$gte = parseInt(dependentPopulationOver);
+            if (dependentPopulationUnder) query.dependent_population.$lte = parseInt(dependentPopulationUnder);
+        }
+        if (requestOver || requestUnder) {
+            query.request = {};
+            if (requestOver) query.request.$gte = parseInt(requestOver);
+            if (requestUnder) query.request.$lte = parseInt(requestUnder);
+        }
+
+        // Configuración de paginación
+        const limitNum = parseInt(limit) || 10; // cuántos elementos quieres que te devuelva en cada página
+        const offsetNum = parseInt(offset) || 0; // cuántos elementos quieres que se salten antes de empezar a devolver
+
+        // Buscar recursos en la base de datos
+        db.find(query)
+            .skip(offsetNum)
+            .limit(limitNum)
+            .exec((err, applications) => {
+                if (err) {
+                    console.error('Error:', err);
+                    return response.status(500).send("Internal Error");
+                }
+                // Si no hay datos, redirige a /loadInitialData
+                else if (!applications || applications.length === 0) {
+                    console.log("No data found, redirecting to loadInitialData");
+                    return response.redirect(BASE_API+`/${RESOURCE_ALM}/loadInitialData`);
+                } else {
+                    // Si hay datos, los enviamos
+                    if (applications.length === 1) {
+                        delete applications[0]._id;
+                        response.status(200).send(applications[0]);
+                    } else {
+                        response.status(200).send(applications.map(r => { delete r._id; return r; }));
+                    }
+                }
+            });
     });
 
     // GET => loadInitialData (al hacer un GET cree 10 o más datos en el array de NodeJS si está vacío)
@@ -184,56 +233,6 @@ function loadBackend_ALM(app, db) {
             });
     });
 
-    //GET -> Busca recursos por rango de población dependiente
-    app.get(BASE_API+`/${RESOURCE_ALM}/dependent_population`, (request, response) => {
-        const { min, max, limit, offset } = request.query;
-        console.log(`New GET to /${RESOURCE_ALM}/dependent_population?min=${min}&max=${max}&limit=${limit}&offset=${offset}`);  
-
-        // Parseamos los parámetros
-        const minNum = parseInt(min);
-        const maxNum = parseInt(max);
-        const limitNum = parseInt(limit) || 5;
-        const offsetNum = parseInt(offset) || 0;
-
-        // Validamos que los parámetros sean números válidos
-        if (isNaN(minNum) || isNaN(maxNum) || isNaN(limitNum) || isNaN(offsetNum)) {
-            return response.status(400).send("Bad Request. Please provide valid numbers for min, max, limit, and offset.");
-        }
-        // Validamos que los números sean positivos
-        if (minNum < 0 || maxNum < 0) {
-            return response.status(400).send("Bad Request. Population values must be positive numbers.");
-        }
-        // Validamos que el rango sea válido
-        if (minNum >= maxNum) {
-            return response.status(400).send("Bad Request. Minimum population must be less than maximum population.");
-        }
-
-        // Buscamos los recursos que cumplen con los criterios de población dependiente
-        db.find({ dependent_population: { $gte: minNum, $lte: maxNum } })
-            .limit(limitNum)
-            .skip(offsetNum)
-            .exec((err, resources) => {
-                if (err) {
-                    console.error('Error:', err);
-                    return response.status(500).send("Internal Error");
-                }
-                // Si no hay datos, devolvemos un error
-                if (!resources || resources.length === 0) {
-                    console.log(`No data found for population: ${minNum} - ${maxNum}`);
-                    return response.status(404).send("Resource not found");
-                }
-                // Si hay un solo elemento, devolvemos un objeto (sin _id)
-                if (resources.length === 1) {
-                    delete resources[0]._id;
-                    response.status(200).send(resources[0]);
-                } else {
-                    // Si hay múltiples elementos, devolvemos un array (sin _id)
-                    response.status(200).send(resources.map(r => { delete r._id; return r; })); // Quitamos el _id
-                }
-            });
-    });
-
-
     // PUT: Si existe "recurso" actualiza los datos
     app.put(BASE_API + `/${RESOURCE_ALM}/places/:place`, (request, response) => {
         const placeName = request.params.place;
@@ -301,6 +300,150 @@ function loadBackend_ALM(app, db) {
         console.log(`New POST to /${RESOURCE_ALM}/places/${request.params.place}`);
         return response.status(405).send("Method not allowed. Cannot POST to a specific resource.");
     });
+
+    //GESTIÓN DE RELACIONES
+    //GET -> Obtiene datos del recurso con mismo place y year
+    app.get(BASE_API+`/${RESOURCE_ALM}/:place/:year`, (request, response) => {
+        const placeName = request.params.place;
+        const yearNumber = request.params.year;
+        const limit = parseInt(request.query.limit) || 10;
+        const offset = parseInt(request.query.offset) || 0;
+        console.log(`New GET to /${RESOURCE_ALM}/${placeName}/${yearNumber}?limit=${limit}&offset=${offset}`);
+        // Validamos que se proporcionen ambos parámetros
+        if (!placeName || !yearNumber) {
+            return response.status(400).send("Bad Request. Please provide both place and year parameters.");
+        }
+
+        // Validamos el formato del año
+        if (!(/^\d{4}$/.test(yearNumber))) {
+            return response.status(400).send("Bad Request. Please provide a valid year in YYYY format.");
+        }
+        // Validamos los parámetros de paginación
+        if (isNaN(limit) || limit < 1) {
+            return response.status(400).send("Bad Request. Limit must be a positive number.");
+        }
+        if (isNaN(offset) || offset < 0) {
+            return response.status(400).send("Bad Request. Offset must be a non-negative number.");
+        }
+        // Buscamos los recursos que coinciden con place y year
+        db.find({ place: placeName, year: parseInt(yearNumber) })
+            .skip(offset)
+            .limit(limit)
+            .exec((err, resources) => {
+                if (err) {
+                    console.error('Error:', err);
+                    return response.status(500).send("Internal Error");
+                }
+
+                if (!resources || resources.length === 0) {
+                    console.log(`No data found for place: ${placeName} and year: ${yearNumber}`);
+                    return response.status(404).send("Resource not found");
+                }
+
+                if (resources.length === 1) {
+                    delete resources[0]._id;
+                    response.status(200).send(resources[0]);
+                } else {
+                    response.status(200).send(resources.map(r => { delete r._id; return r; }));
+                }
+            });
+    });
+
+    //PUT: Si existe la relación, actualiza los datos
+    app.put(BASE_API+`/${RESOURCE_ALM}/:place/:year`, (request, response) => {
+        const placeName = request.params.place;
+        const yearNumber = request.params.year;
+        const newData = request.body;
+
+        console.log(`New PUT to /${RESOURCE_ALM}/${placeName}/${yearNumber}`);
+
+        // Validamos el formato del año
+        if (!(/^\d{4}$/.test(yearNumber))) {
+            return response.status(400).send("Bad Request. Please provide a valid year in YYYY format.");
+        }
+
+        // Validamos que el body no esté vacío
+        if (!newData || Object.keys(newData).length === 0) {
+            return response.status(400).send("Bad Request. Request body cannot be empty");
+        }
+
+        // Validamos que los campos en el body coincidan con los de la URL
+        if (newData.place && newData.place !== placeName) {
+            return response.status(400).send("Bad Request. Place in body must match URL parameter");
+        }
+        if (newData.year && newData.year !== parseInt(yearNumber)) {
+            return response.status(400).send("Bad Request. Year in body must match URL parameter");
+        }
+
+        // Validamos campos requeridos
+        const requiredFields = ['population', 'dependent_population', 'request'];
+        const missingFields = requiredFields.filter(field => !(field in newData));
+        if (missingFields.length > 0) {
+            return response.status(400).send(`Bad Request. Missing required fields: ${missingFields.join(', ')}`);
+        }
+
+        // Actualizamos el recurso
+        db.update(
+            { place: placeName, year: parseInt(yearNumber) },
+            { $set: newData },
+            { multi: false },
+            (err, numReplaced) => {
+                if (err) {
+                    console.error('Error:', err);
+                    return response.status(500).send("Internal Error");
+                }
+
+                if (numReplaced === 0) {
+                    console.log(`No resource found for place: ${placeName} and year: ${yearNumber}`);
+                    return response.status(404).send("Resource not found");
+                }
+
+                console.log(`Updated resource for place: ${placeName} and year: ${yearNumber}`);
+                response.status(200).send("Resource updated successfully");
+            }
+        );
+    });
+
+    //DELETE -> Borra la relación
+    app.delete(BASE_API+`/${RESOURCE_ALM}/:place/:year`, (request, response) => {
+        const placeName = request.params.place;
+        const yearNumber = request.params.year;
+
+        console.log(`New DELETE to /${RESOURCE_ALM}/${placeName}/${yearNumber}`);
+
+        // Validamos el formato del año
+        if (!(/^\d{4}$/.test(yearNumber))) {
+            return response.status(400).send("Bad Request. Please provide a valid year in YYYY format.");
+        }
+
+        // Eliminamos el recurso específico
+        db.remove(
+            { place: placeName, year: parseInt(yearNumber) },
+            { multi: false },
+            (err, numRemoved) => {
+                if (err) {
+                    console.error('Error:', err);
+                    return response.status(500).send("Internal Error");
+                }
+
+                if (numRemoved === 0) {
+                    console.log(`No resource found for place: ${placeName} and year: ${yearNumber}`);
+                    return response.status(404).send("Resource not found");
+                }
+
+                console.log(`Deleted resource for place: ${placeName} and year: ${yearNumber}`);
+                response.status(204).end();
+            }
+        );
+    });
+
+    //POST -> DEVUELVE ERROR (NO SE PUEDE HACER POST A UN RECURSO CONCRETO)
+    app.post(BASE_API + `/${RESOURCE_ALM}/:place/:year`, (request, response) => {
+        console.log(`New POST to /${RESOURCE_ALM}/${request.params.place}/${request.params.year}`);
+        return response.status(405).send("Method not allowed. Cannot POST to a specific resource.");
+    });
+
+
 }
 
 export { loadBackend_ALM };
