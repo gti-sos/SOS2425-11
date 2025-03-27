@@ -25,7 +25,12 @@ function loadBackend_ALM(app, db) {
         
         // Aplicamos filtros si están presentes
         if (place) query.place = place;
-        if (year) query.year = parseInt(year);
+        if (year) {
+            if (!(/^\d{4}$/.test(year))) {
+                return response.status(400).send("Bad Request. Please provide a valid year in YYYY format.");
+            }
+            query.year = parseInt(year);
+        }
         // $gte significa "greater than or equal to" 
         // $lte significa "less than or equal to"
         if (populationOver || populationUnder) {
@@ -57,10 +62,24 @@ function loadBackend_ALM(app, db) {
                     console.error('Error:', err);
                     return response.status(500).send("Internal Error");
                 }
-                // Si no hay datos, redirige a /loadInitialData
-                else if (!applications || applications.length === 0) {
-                    console.log("No data found, redirecting to loadInitialData");
-                    return response.redirect(BASE_API+`/${RESOURCE_ALM}/loadInitialData`);
+
+                // Si no hay datos en la base de datos, redirige a /loadInitialData
+                if (!applications || applications.length === 0) {
+                    // Verificamos si la base de datos está completamente vacía
+                    db.count({}, (err, count) => {
+                        if (err) {
+                            console.error('Error:', err);
+                            return response.status(500).send("Internal Error");
+                        }
+                        if (count === 0) {
+                            console.log("Database is empty, redirecting to loadInitialData");
+                            return response.redirect(BASE_API+`/${RESOURCE_ALM}/loadInitialData`);
+                        } else {
+                            // Si hay datos pero no coinciden con los filtros, devolvemos 404
+                            console.log("No resources found matching the specified filters");
+                            return response.status(404).send("No resources found matching the specified filters");
+                        }
+                    });
                 } else {
                     // Si hay datos, los enviamos
                     if (applications.length === 1) {
@@ -173,9 +192,9 @@ function loadBackend_ALM(app, db) {
 
     //GESTIÓN DE UN RECURSO ESPECÍFICO
     //GET -> Obtiene datos del recurso place
-    app.get(BASE_API+`/${RESOURCE_ALM}/places/:place`, (request, response) => {
+    app.get(BASE_API+`/${RESOURCE_ALM}/:place`, (request, response) => {
         const placeName = request.params.place;
-        console.log(`New GET to /${RESOURCE_ALM}/places/${placeName}`);
+        console.log(`New GET to /${RESOURCE_ALM}/${placeName}`);
 
         db.find({ place: placeName }, (err, resources) => {
             if (err) {
@@ -198,45 +217,10 @@ function loadBackend_ALM(app, db) {
         });
     });
 
-    //GET -> Busca datos del recurso por año
-    app.get(BASE_API+`/${RESOURCE_ALM}/years/:year`, (request, response) => {
-        const yearNumber = request.params.year;
-        console.log(`New GET to /${RESOURCE_ALM}/years/${yearNumber}`);
-        
-        const limit = parseInt(request.query.limit) || 10;
-        const offset = parseInt(request.query.offset) || 0;
-
-        if (!(/^\d{4}$/.test(yearNumber))) {
-            return response.status(400).send("Bad Request. Please provide a valid year in YYYY format.");
-        }
-        db.find({ year: parseInt(yearNumber) })
-            .skip(offset)
-            .limit(limit)
-            .exec((err, resources) => {
-                if (err) {
-                    console.error('Error:', err);
-                    return response.status(500).send("Internal Error");
-                }
-
-                if (!resources || resources.length === 0) {
-                    console.log(`No data found for year: ${yearNumber}`);
-                    return response.status(404).send("Resource not found");
-                }
-                if (resources.length === 1) {
-                    // Si solo hay un elemento, devolverlo como objeto (sin _id)   
-                    delete resources[0]._id;
-                    response.status(200).send(resources[0]);
-                } else {
-                    // Si hay múltiples elementos, devolver array (sin _id)
-                    response.status(200).send(resources.map(r => { delete r._id; return r; })); // Quitamos el _id
-                }
-            });
-    });
-
     // PUT: Si existe "recurso" actualiza los datos
-    app.put(BASE_API + `/${RESOURCE_ALM}/places/:place`, (request, response) => {
+    app.put(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
         const placeName = request.params.place;
-        console.log(`New PUT to /${RESOURCE_ALM}/places/${placeName}`);
+        console.log(`New PUT to /${RESOURCE_ALM}/${placeName}`);
 
         // Validar que se envían datos en el body
         const newData = request.body;
@@ -275,9 +259,9 @@ function loadBackend_ALM(app, db) {
 
 
     //DELETE -> Borra "recurso"
-    app.delete(BASE_API+`/${RESOURCE_ALM}/places/:place`, (request, response) => {
+    app.delete(BASE_API+`/${RESOURCE_ALM}/:place`, (request, response) => {
         const placeName = request.params.place;
-        console.log(`New DELETE to /${RESOURCE_ALM}/places/${placeName}`);
+        console.log(`New DELETE to /${RESOURCE_ALM}/${placeName}`);
         // Eliminamos todos los recursos con el mismo place
         db.remove({ place: placeName }, { multi: true }, (err, numRemoved) => {
             if (err) {
@@ -296,8 +280,8 @@ function loadBackend_ALM(app, db) {
     });
 
     //POST -> DEVUELVE ERROR (NO SE PUEDE HACER POST A UN RECURSO CONCRETO)
-    app.post(BASE_API + `/${RESOURCE_ALM}/places/:place`, (request, response) => {
-        console.log(`New POST to /${RESOURCE_ALM}/places/${request.params.place}`);
+    app.post(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
+        console.log(`New POST to /${RESOURCE_ALM}/${request.params.place}`);
         return response.status(405).send("Method not allowed. Cannot POST to a specific resource.");
     });
 
