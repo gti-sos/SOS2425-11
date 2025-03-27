@@ -430,7 +430,6 @@ function loadBackend_ALM(app, db) {
                     console.log(`No resource found for place: ${placeName} and year: ${yearNumber}`);
                     return response.status(404).send("Resource not found");
                 }
-
                 console.log(`Deleted resource for place: ${placeName} and year: ${yearNumber}`);
                 response.status(204).end();
             }
