@@ -75,6 +75,22 @@ npm install nedb
 ### 2️⃣ Iniciar el servidor local:
 npm start
 
+### Correr tests:
+Una vez inicializado el servidor local en otra pestaña de terminal, podemos ejecutar los tests localmente de la siguiente manera:
+
+Local:
+npx newman run tests/back/api-tests.json -e tests/back/api-env-local.json
+
+Online:
+npx newman run tests/back/api-tests.json -e tests/back/api-env-online.json
+
+Se modifica package.json para meter ese comando y que solo tengamos que hacer lo siguiente:
+npm test
+
+Para correr el servidor y test sin tener que abrir una pestaña nueva:
+npm install start-server-and-test --save-dev  //save dev hace que se guarde como una dependencia de desarrollo
+
+
 
 La API estará disponible en:  
 👉 `http://localhost:12345/api/v1/FFFFF`

@@ -3,6 +3,11 @@ const RESOURCE_ALM = "autonomy-dependence-applications";
 
 function loadBackend_ALM(app, db) {
 
+    //REDIRECT al portal de documentación
+    app.get(BASE_API+`/${RESOURCE_ALM}/docs`, (request, response) => {
+        return response.redirect("https://documenter.getpostman.com/view/42116317/2sAYkLnxYU");
+    });
+
     // GET: Obtiene datos del recurso con búsquedas y paginación opcionales
     app.get(BASE_API+`/${RESOURCE_ALM}`, (request, response) => {
         console.log(`New GET to /${RESOURCE_ALM}`, request.query);
