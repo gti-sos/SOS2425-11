@@ -231,7 +231,7 @@ app.get(BASE_API+`/${RESOURCE_MTP}`, (request, response) => {
     response.send(JSON.stringify(pensions, null, 2));
 });
 
-
+ 
  // GET: Carga 10 datos iniciales en el array de NodeJS si está vacío
  app.get(BASE_API+`/${RESOURCE_MTP}/loadInitialData`, (request, response) => {
     console.log(`New GET to /${RESOURCE_MTP}/loadInitialData`)
