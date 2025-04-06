@@ -235,7 +235,7 @@ function loadBackend_ALM(app, db) {
 
         // Si se intenta modificar el place, devolver error
         if (newData.place && newData.place !== placeName) {
-            return response.status(400).send("Bad Request. Cannot modify the place identifier");
+            return response.status(400).send("Bad Request. Place in body must match URL parameter");
         }
 
         // Eliminar el place del newData si existe para evitar actualizaciones no deseadas
