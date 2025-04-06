@@ -232,15 +232,54 @@ function loadBackend_ALM(app, db) {
         if (!newData || Object.keys(newData).length === 0) {
             return response.status(400).send("Bad Request. Request body cannot be empty");
         }
-        // Validar que el place en el body coincide con el de la URL
-        if (!newData.place || newData.place !== placeName) {
-            return response.status(400).send("Bad Request. Place in body must match URL parameter");
+
+        // Si se intenta modificar el place, devolver error
+        if (newData.place && newData.place !== placeName) {
+            return response.status(400).send("Bad Request. Cannot modify the place identifier");
         }
-        // Validar estructura de datos mínima esperada
-        const requiredFields = ['year', 'population', 'dependent_population', 'request'];
-        const missingFields = requiredFields.filter(field => !(field in newData));
-        if (missingFields.length > 0) {
-            return response.status(400).send(`Bad Request. Missing required fields: ${missingFields.join(', ')}`);
+
+        // Eliminar el place del newData si existe para evitar actualizaciones no deseadas
+        delete newData.place;
+
+        // Validar campos y sus formatos
+        const validFields = {
+            year: {
+                type: 'number',
+                validate: (value) => /^\d{4}$/.test(value.toString())
+            },
+            population: {
+                type: 'number',
+                validate: (value) => value > 0
+            },
+            dependent_population: {
+                type: 'number',
+                validate: (value) => value >= 0
+            },
+            request: {
+                type: 'number',
+                validate: (value) => value >= 0
+            }
+        };
+
+        // Verificar que los campos enviados son válidos
+        const invalidFields = Object.keys(newData).filter(field => !validFields[field]);
+        if (invalidFields.length > 0) {
+            return response.status(400).send(`Bad Request. Invalid fields: ${invalidFields.join(', ')}`);
+        }
+
+        // Validar formato de los campos enviados
+        for (const [field, value] of Object.entries(newData)) {
+            const fieldConfig = validFields[field];
+            
+            // Validar tipo
+            if (typeof value !== fieldConfig.type) {
+                return response.status(400).send(`Bad Request. Field '${field}' must be of type ${fieldConfig.type}`);
+            }
+
+            // Validar formato específico
+            if (!fieldConfig.validate(value)) {
+                return response.status(400).send(`Bad Request. Invalid format for field '${field}'`);
+            }
         }
 
         db.update(
