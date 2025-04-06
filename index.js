@@ -33,7 +33,7 @@ app.get('/', (request, response) =>{
 
 // Cargar el backend
 loadBackend_ALM(app, db_ALM);
-loadBackend_EBT(app);
+loadBackend_EBT(app, db_EBT);
 
 // Iniciar el servidor
 app.listen(PORT, () => {
