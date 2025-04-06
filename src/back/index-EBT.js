@@ -144,6 +144,7 @@ app.post(BASE_API + `/${RESOURCE_EBT}`, (request, response) => {
     let newAmount = request.body;
 
     if (!newAmount.place || !newAmount.year || !newAmount.retirement_amount || !newAmount.disability_amount || !newAmount.retirement_number || !newAmount.disability_number) {
+        console.error("Missing fields in the request body");
         return response.status(400).json({ error: "Fields missing" });
     }
 
