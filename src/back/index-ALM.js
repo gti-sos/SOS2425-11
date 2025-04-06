@@ -235,8 +235,11 @@ function loadBackend_ALM(app, db) {
 
         // Si se intenta modificar el place, devolver error
         if (newData.place && newData.place !== placeName) {
-            return response.status(400).json("Bad Request. Cannot modify the place identifier");
+            return response.status(400).send("Bad Request. Place in body must match URL parameter");
         }
+
+        // Eliminar el place del newData si existe para evitar actualizaciones no deseadas
+        delete newData.place;
 
         // Validar campos y sus formatos
         const validFields = {
@@ -261,7 +264,7 @@ function loadBackend_ALM(app, db) {
         // Verificar que los campos enviados son válidos
         const invalidFields = Object.keys(newData).filter(field => !validFields[field]);
         if (invalidFields.length > 0) {
-            return response.status(400).json(`Bad Request. Invalid fields: ${invalidFields.join(', ')}`);
+            return response.status(400).send(`Bad Request. Invalid fields: ${invalidFields.join(', ')}`);
         }
 
         // Validar formato de los campos enviados
@@ -270,12 +273,12 @@ function loadBackend_ALM(app, db) {
             
             // Validar tipo
             if (typeof value !== fieldConfig.type) {
-                return response.status(400).json(`Bad Request. Field '${field}' must be of type ${fieldConfig.type}`);
+                return response.status(400).send(`Bad Request. Field '${field}' must be of type ${fieldConfig.type}`);
             }
 
             // Validar formato específico
             if (!fieldConfig.validate(value)) {
-                return response.status(400).json(`Bad Request. Invalid format for field '${field}'`);
+                return response.status(400).send(`Bad Request. Invalid format for field '${field}'`);
             }
         }
 
