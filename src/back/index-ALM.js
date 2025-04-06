@@ -32,7 +32,7 @@ function loadBackend_ALM(app, db) {
         if (place) query.place = place;
         if (year) {
             if (!(/^\d{4}$/.test(year))) {
-                return response.status(400).send("Bad Request. Please provide a valid year in YYYY format.");
+                return response.status(400).json("Bad Request. Please provide a valid year in YYYY format.");
             }
             query.year = parseInt(year);
         }
@@ -65,7 +65,7 @@ function loadBackend_ALM(app, db) {
             .exec((err, applications) => {
                 if (err) {
                     console.error('Error:', err);
-                    return response.status(500).send("Internal Error");
+                    return response.status(500).json("Internal Error");
                 }
 
                 // Si no hay datos en la base de datos, redirige a /loadInitialData
@@ -74,7 +74,7 @@ function loadBackend_ALM(app, db) {
                     db.count({}, (err, count) => {
                         if (err) {
                             console.error('Error:', err);
-                            return response.status(500).send("Internal Error");
+                            return response.status(500).json("Internal Error");
                         }
                         if (count === 0) {
                             console.log("Database is empty, redirecting to loadInitialData");
@@ -82,16 +82,16 @@ function loadBackend_ALM(app, db) {
                         } else {
                             // Si hay datos pero no coinciden con los filtros, devolvemos 404
                             console.log("No resources found matching the specified filters");
-                            return response.status(404).send("No resources found matching the specified filters");
+                            return response.status(404).json("No resources found matching the specified filters");
                         }
                     });
                 } else {
                     // Si hay datos, los enviamos
                     if (applications.length === 1) {
                         delete applications[0]._id;
-                        response.status(200).send(applications[0]);
+                        response.status(200).json(applications[0]);
                     } else {
-                        response.status(200).send(applications.map(r => { delete r._id; return r; }));
+                        response.status(200).json(applications.map(r => { delete r._id; return r; }));
                     }
                 }
             });
@@ -104,12 +104,12 @@ function loadBackend_ALM(app, db) {
         db.find({}, (err, existingData) => {
             if (err) {
                 console.error('Error:', err);
-                return response.status(500).send("Internal Error");
+                return response.status(500).json("Internal Error");
             }
             // Si ya hay datos, no los sobreescribimos
             if (existingData && existingData.length > 0) {
                 console.log("Data already exists");
-                return response.status(200).send("Data already loaded");
+                return response.status(200).json("Data already loaded");
             }
             // Datos iniciales a insertar
             const initialData = [
@@ -129,10 +129,10 @@ function loadBackend_ALM(app, db) {
             db.insert(initialData, (err, newData) => {
                 if (err) {
                     console.error('Error:', err);
-                    return response.status(500).send("Internal Error");
+                    return response.status(500).json("Internal Error");
                 }
                 console.log("Initial data loaded successfully");
-                response.status(201).send("Initial data loaded successfully");
+                response.status(201).json("Initial data loaded successfully");
             });
         });
     });
@@ -144,26 +144,26 @@ function loadBackend_ALM(app, db) {
         // Validación básica de campos requeridos
         if (!newApplication.place || !newApplication.year || !newApplication.population || 
             !newApplication.dependent_population || !newApplication.request) {
-            return response.status(400).send("Missing required fields");
+            return response.status(400).json("Missing required fields");
         }
         // Verificamos duplicados
         db.findOne({ place: newApplication.place, year: newApplication.year }, (err, existingRec) => {
             if (err) {
                 console.error('Error:', err);
-                return response.status(500).send("Internal Error");
+                return response.status(500).json("Internal Error");
             }
             
             if (existingRec) {
-                return response.status(409).send("Resource already exists");
+                return response.status(409).json("Resource already exists");
             }
             // Insertamos nuevo recurso
             db.insert(newApplication, (err, newRec) => {
                 if (err) {
                     console.error('Error:', err);
-                    return response.status(500).send("Internal Error");
+                    return response.status(500).json("Internal Error");
                 }
                 console.log("New resource added successfully");
-                response.status(201).send("Resource created successfully");
+                response.status(201).json("Resource created successfully");
             });
         });
     });
@@ -175,12 +175,12 @@ function loadBackend_ALM(app, db) {
         db.remove({}, { multi: true }, (err, numRemoved) => {
             if (err) {
                 console.error('Error:', err);
-                return response.status(500).send("Internal Error");
+                return response.status(500).json("Internal Error");
             }
             // Si no se ha eliminado nada, devolvemos un error de que no se ha encontrado el recurso
             if (numRemoved === 0) {
                 console.log(`No resources found`);
-                return response.status(404).send("Resources not found");
+                return response.status(404).json("Resources not found");
             }
             // Si se ha eliminado, devolvemos un 204 (Success Delete, No Content)
             console.log(`Deleted ${numRemoved} resources`);
@@ -191,7 +191,7 @@ function loadBackend_ALM(app, db) {
     //PUT -> DEVUELVE ERROR (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS)
     app.put(BASE_API + `/${RESOURCE_ALM}`, (request, response) => {
         console.log(`New PUT to /${RESOURCE_ALM}`);
-        return response.status(405).send("Method not allowed. Cannot PUT to a list of resources.");
+        return response.status(405).json("Method not allowed. Cannot PUT to a list of resources.");
     });
 
 
@@ -204,20 +204,20 @@ function loadBackend_ALM(app, db) {
         db.find({ place: placeName }, (err, resources) => {
             if (err) {
                 console.error('Error:', err);
-                return response.status(500).send("Internal Error");
+                return response.status(500).json("Internal Error");
             }
             if (!resources || resources.length === 0) {
                 console.log(`No data found for place: ${placeName}`);
-                return response.status(404).send("Resource not found");
+                return response.status(404).json("Resource not found");
             }
             
             if (resources.length === 1) {
                 // Si solo hay un elemento, devolverlo como objeto (sin _id)
                 delete resources[0]._id;
-                response.status(200).send(resources[0]);
+                response.status(200).json(resources[0]);
             } else {
                 // Si hay múltiples elementos, devolver array (sin _id)
-                response.status(200).send(resources.map(r => { delete r._id; return r; })); // Quitamos el _id
+                response.status(200).json(resources.map(r => { delete r._id; return r; })); // Quitamos el _id
             }
         });
     });
@@ -230,17 +230,53 @@ function loadBackend_ALM(app, db) {
         // Validar que se envían datos en el body
         const newData = request.body;
         if (!newData || Object.keys(newData).length === 0) {
-            return response.status(400).send("Bad Request. Request body cannot be empty");
+            return response.status(400).json("Bad Request. Request body cannot be empty");
         }
-        // Validar que el place en el body coincide con el de la URL
-        if (!newData.place || newData.place !== placeName) {
-            return response.status(400).send("Bad Request. Place in body must match URL parameter");
+
+        // Si se intenta modificar el place, devolver error
+        if (newData.place && newData.place !== placeName) {
+            return response.status(400).json("Bad Request. Cannot modify the place identifier");
         }
-        // Validar estructura de datos mínima esperada
-        const requiredFields = ['year', 'population', 'dependent_population', 'request'];
-        const missingFields = requiredFields.filter(field => !(field in newData));
-        if (missingFields.length > 0) {
-            return response.status(400).send(`Bad Request. Missing required fields: ${missingFields.join(', ')}`);
+
+        // Validar campos y sus formatos
+        const validFields = {
+            year: {
+                type: 'number',
+                validate: (value) => /^\d{4}$/.test(value.toString())
+            },
+            population: {
+                type: 'number',
+                validate: (value) => value > 0
+            },
+            dependent_population: {
+                type: 'number',
+                validate: (value) => value >= 0
+            },
+            request: {
+                type: 'number',
+                validate: (value) => value >= 0
+            }
+        };
+
+        // Verificar que los campos enviados son válidos
+        const invalidFields = Object.keys(newData).filter(field => !validFields[field]);
+        if (invalidFields.length > 0) {
+            return response.status(400).json(`Bad Request. Invalid fields: ${invalidFields.join(', ')}`);
+        }
+
+        // Validar formato de los campos enviados
+        for (const [field, value] of Object.entries(newData)) {
+            const fieldConfig = validFields[field];
+            
+            // Validar tipo
+            if (typeof value !== fieldConfig.type) {
+                return response.status(400).json(`Bad Request. Field '${field}' must be of type ${fieldConfig.type}`);
+            }
+
+            // Validar formato específico
+            if (!fieldConfig.validate(value)) {
+                return response.status(400).json(`Bad Request. Invalid format for field '${field}'`);
+            }
         }
 
         db.update(
@@ -250,14 +286,14 @@ function loadBackend_ALM(app, db) {
             (err, numReplaced) => {
                 if (err) {
                     console.error('Error:', err);
-                    return response.status(500).send("Internal Error");
+                    return response.status(500).json("Internal Error");
                 }
                 if (numReplaced === 0) {
                     console.log(`No resources found for place: ${placeName}`);
-                    return response.status(404).send("Resource not found");
+                    return response.status(404).json("Resource not found");
                 }
                 console.log(`Updated ${numReplaced} resources for place: ${placeName}`);
-                response.status(200).send(`Updated ${numReplaced} resources successfully`);
+                response.status(200).json(`Updated ${numReplaced} resources successfully`);
             }
         );
     });
@@ -271,12 +307,12 @@ function loadBackend_ALM(app, db) {
         db.remove({ place: placeName }, { multi: true }, (err, numRemoved) => {
             if (err) {
                 console.error('Error:', err);
-                return response.status(500).send("Internal Error");
+                return response.status(500).json("Internal Error");
             }
             // Si no se ha eliminado nada, devolvemos un error de que no se ha encontrado el recurso
             if (numRemoved === 0) {
                 console.log(`No resources found for place: ${placeName}`);
-                return response.status(404).send("Resource not found");
+                return response.status(404).json("Resource not found");
             }
             // Si se ha eliminado, devolvemos un 204 (Success Delete, No Content)
             console.log(`Deleted ${numRemoved} resources for place: ${placeName}`);
@@ -287,7 +323,7 @@ function loadBackend_ALM(app, db) {
     //POST -> DEVUELVE ERROR (NO SE PUEDE HACER POST A UN RECURSO CONCRETO)
     app.post(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
         console.log(`New POST to /${RESOURCE_ALM}/${request.params.place}`);
-        return response.status(405).send("Method not allowed. Cannot POST to a specific resource.");
+        return response.status(405).json("Method not allowed. Cannot POST to a specific resource.");
     });
 
     //GESTIÓN DE RELACIONES
@@ -300,19 +336,19 @@ function loadBackend_ALM(app, db) {
         console.log(`New GET to /${RESOURCE_ALM}/${placeName}/${yearNumber}?limit=${limit}&offset=${offset}`);
         // Validamos que se proporcionen ambos parámetros
         if (!placeName || !yearNumber) {
-            return response.status(400).send("Bad Request. Please provide both place and year parameters.");
+            return response.status(400).json("Bad Request. Please provide both place and year parameters.");
         }
 
         // Validamos el formato del año
         if (!(/^\d{4}$/.test(yearNumber))) {
-            return response.status(400).send("Bad Request. Please provide a valid year in YYYY format.");
+            return response.status(400).json("Bad Request. Please provide a valid year in YYYY format.");
         }
         // Validamos los parámetros de paginación
         if (isNaN(limit) || limit < 1) {
-            return response.status(400).send("Bad Request. Limit must be a positive number.");
+            return response.status(400).json("Bad Request. Limit must be a positive number.");
         }
         if (isNaN(offset) || offset < 0) {
-            return response.status(400).send("Bad Request. Offset must be a non-negative number.");
+            return response.status(400).json("Bad Request. Offset must be a non-negative number.");
         }
         // Buscamos los recursos que coinciden con place y year
         db.find({ place: placeName, year: parseInt(yearNumber) })
@@ -321,19 +357,19 @@ function loadBackend_ALM(app, db) {
             .exec((err, resources) => {
                 if (err) {
                     console.error('Error:', err);
-                    return response.status(500).send("Internal Error");
+                    return response.status(500).json("Internal Error");
                 }
 
                 if (!resources || resources.length === 0) {
                     console.log(`No data found for place: ${placeName} and year: ${yearNumber}`);
-                    return response.status(404).send("Resource not found");
+                    return response.status(404).json("Resource not found");
                 }
 
                 if (resources.length === 1) {
                     delete resources[0]._id;
-                    response.status(200).send(resources[0]);
+                    response.status(200).json(resources[0]);
                 } else {
-                    response.status(200).send(resources.map(r => { delete r._id; return r; }));
+                    response.status(200).json(resources.map(r => { delete r._id; return r; }));
                 }
             });
     });
@@ -348,27 +384,27 @@ function loadBackend_ALM(app, db) {
 
         // Validamos el formato del año
         if (!(/^\d{4}$/.test(yearNumber))) {
-            return response.status(400).send("Bad Request. Please provide a valid year in YYYY format.");
+            return response.status(400).json("Bad Request. Please provide a valid year in YYYY format.");
         }
 
         // Validamos que el body no esté vacío
         if (!newData || Object.keys(newData).length === 0) {
-            return response.status(400).send("Bad Request. Request body cannot be empty");
+            return response.status(400).json("Bad Request. Request body cannot be empty");
         }
 
         // Validamos que los campos en el body coincidan con los de la URL
         if (newData.place && newData.place !== placeName) {
-            return response.status(400).send("Bad Request. Place in body must match URL parameter");
+            return response.status(400).json("Bad Request. Place in body must match URL parameter");
         }
         if (newData.year && newData.year !== parseInt(yearNumber)) {
-            return response.status(400).send("Bad Request. Year in body must match URL parameter");
+            return response.status(400).json("Bad Request. Year in body must match URL parameter");
         }
 
         // Validamos campos requeridos
         const requiredFields = ['population', 'dependent_population', 'request'];
         const missingFields = requiredFields.filter(field => !(field in newData));
         if (missingFields.length > 0) {
-            return response.status(400).send(`Bad Request. Missing required fields: ${missingFields.join(', ')}`);
+            return response.status(400).json(`Bad Request. Missing required fields: ${missingFields.join(', ')}`);
         }
 
         // Actualizamos el recurso
@@ -379,16 +415,16 @@ function loadBackend_ALM(app, db) {
             (err, numReplaced) => {
                 if (err) {
                     console.error('Error:', err);
-                    return response.status(500).send("Internal Error");
+                    return response.status(500).json("Internal Error");
                 }
 
                 if (numReplaced === 0) {
                     console.log(`No resource found for place: ${placeName} and year: ${yearNumber}`);
-                    return response.status(404).send("Resource not found");
+                    return response.status(404).json("Resource not found");
                 }
 
                 console.log(`Updated resource for place: ${placeName} and year: ${yearNumber}`);
-                response.status(200).send("Resource updated successfully");
+                response.status(200).json("Resource updated successfully");
             }
         );
     });
@@ -402,7 +438,7 @@ function loadBackend_ALM(app, db) {
 
         // Validamos el formato del año
         if (!(/^\d{4}$/.test(yearNumber))) {
-            return response.status(400).send("Bad Request. Please provide a valid year in YYYY format.");
+            return response.status(400).json("Bad Request. Please provide a valid year in YYYY format.");
         }
 
         // Eliminamos el recurso específico
@@ -412,12 +448,12 @@ function loadBackend_ALM(app, db) {
             (err, numRemoved) => {
                 if (err) {
                     console.error('Error:', err);
-                    return response.status(500).send("Internal Error");
+                    return response.status(500).json("Internal Error");
                 }
 
                 if (numRemoved === 0) {
                     console.log(`No resource found for place: ${placeName} and year: ${yearNumber}`);
-                    return response.status(404).send("Resource not found");
+                    return response.status(404).json("Resource not found");
                 }
                 console.log(`Deleted resource for place: ${placeName} and year: ${yearNumber}`);
                 response.status(204).end();
@@ -428,7 +464,7 @@ function loadBackend_ALM(app, db) {
     //POST -> DEVUELVE ERROR (NO SE PUEDE HACER POST A UN RECURSO CONCRETO)
     app.post(BASE_API + `/${RESOURCE_ALM}/:place/:year`, (request, response) => {
         console.log(`New POST to /${RESOURCE_ALM}/${request.params.place}/${request.params.year}`);
-        return response.status(405).send("Method not allowed. Cannot POST to a specific resource.");
+        return response.status(405).json("Method not allowed. Cannot POST to a specific resource.");
     });
 
 
