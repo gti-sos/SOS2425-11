@@ -50,21 +50,25 @@ app.get(BASE_API + `/${RESOURCE_EBT}`, (request, response) => {
     if (year) query.year = parseInt(year);
 
     if (retirement_amountOver || retirement_amountUnder){
+        query.retirement_amount = {};
         if (retirement_amountOver) query.retirement_amount.$gte = parseInt(retirement_amountOver);
         if (retirement_amountUnder) query.retirement_amount.$lte = parseInt(retirement_amountUnder);
     }
 
     if (disability_amountOver || disability_amountUnder){
+        query.disability_amount = {};
         if (disability_amountOver) query.disability_amount.$gte = parseInt(disability_amountOver);
         if (disability_amountUnder) query.disability_amount.$lte = parseInt(disability_amountUnder)
     }
 
     if (retirement_numberOver || retirement_numberUnder){
+        query.retirement_number = {};
         if (retirement_numberOver) query.retirement_number.$gte = parseInt(retirement_numberOver);
         if (retirement_numberUnder) query.retirement_number.$lte = parseInt(retirement_numberUnder);
     }
 
     if (disability_numberOver || disability_numberUnder){
+        query.disability_number = {};
         if (disability_numberOver) query.disability_number.$gte = parseInt(disability_numberOver);
         if (disability_numberUnder) query.disability_number.$lte = parseInt(disability_numberUnder)
     }
@@ -91,7 +95,7 @@ app.get(BASE_API + `/${RESOURCE_EBT}`, (request, response) => {
                 return response.status(404).send("No data matches the query")
             })
         }else{
-            response.status(200).send(JSON.stringify(contacts.map(r=>{delete r._id; return r})))
+            response.status(200).json(contacts.map(r=>{delete r._id; return r}))
         }
     }) 
     
@@ -206,7 +210,7 @@ app.get(BASE_API + `/${RESOURCE_EBT}/:place`, (request, response) => {
             return response.status(404).send(`No resource matches with place : ${placeName}`)
         }
         console.log(`${resources.length} displayed`)
-        response.status(201).send(JSON.stringify(resources.map(r=>{delete r._id;return r})))
+        response.status(200).json(resources.map(r=>{delete r._id;return r}))
     })
 });
 
@@ -279,9 +283,9 @@ app.get(BASE_API + `/${RESOURCE_EBT}/:place/:year`, (request, response) => {
     const yearNumber = request.params.year;
     const limit = parseInt(request.query.limit) || 10;
     const offset = parseInt(request.query.offset) || 0;
-    console.log(`New GET to /${RESOURCE_EBT}/${placeName}/${year}?limit=${limit}&offset=${offset}`);
+    console.log(`New GET to /${RESOURCE_EBT}/${placeName}/${yearNumber}?limit=${limit}&offset=${offset}`);
 
-    if (year && !/^\d{4}$/.test(year)) {	
+    if (yearNumber && !/^\d{4}$/.test(yearNumber)) {	
         return response.status(400).json({ error: "Invalid or missing year" });
     }
     if (!placeName) {
@@ -310,10 +314,10 @@ app.get(BASE_API + `/${RESOURCE_EBT}/:place/:year`, (request, response) => {
 
             if (resources.length === 1) {
                 delete resources[0]._id;
-                response.status(200).send(JSON.stringify(resources[0]));
+                response.status(200).json(resources[0]);
             } else {
                 console.warn(`Multiple resources found for place: ${placeName} and year: ${yearNumber}`);
-                response.status(200).send(JSON.stringify(resources.map(r => { delete r._id; return r; })));
+                response.status(200).json(resources.map(r => { delete r._id; return r; }));
             }
         });
 });
@@ -339,11 +343,6 @@ app.put(BASE_API + `/${RESOURCE_EBT}/:place/:year`, (request, response) => {
         return response.status(400).send("Bad Request. Year in body must match URL parameter");
     }
 
-    const requiredFields = ['retirement_amount', 'disability_amount', 'retirement_number', 'disability_number'];
-    const missingFields = requiredFields.filter(field => !(field in newData));
-    if (missingFields.length > 0) {
-        return response.status(400).send(`Bad Request. Missing required fields: ${missingFields.join(', ')}`);
-    }
 
     db.update(
         { place: placeName, year: parseInt(yearNumber) },
