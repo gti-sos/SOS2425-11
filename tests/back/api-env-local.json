@@ -1,6 +1,6 @@
 {
-	"id": "468b8487-b55b-4001-aef9-e1fdf7198be9",
-	"name": "local",
+	"id": "9954f602-8b93-4412-85df-a5cec4d09a9f",
+	"name": "LOCAL",
 	"values": [
 		{
 			"key": "BASE_URL",
@@ -9,13 +9,25 @@
 			"enabled": true
 		},
 		{
+			"key": "RESOURCE_EBT",
+			"value": "/api/v1/social-pension-payrolls",
+			"type": "default",
+			"enabled": true
+		},
+		{
 			"key": "RESOURCE_ALM",
 			"value": "/api/v1/autonomy-dependence-applications",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "RESOURCE_MTP",
+			"value": "/api/v1/management-evolutions",
 			"type": "default",
 			"enabled": true
 		}
 	],
 	"_postman_variable_scope": "environment",
-	"_postman_exported_at": "2025-03-27T17:23:15.091Z",
-	"_postman_exported_using": "Postman/11.38.4-250326-2336"
+	"_postman_exported_at": "2025-04-07T08:27:12.778Z",
+	"_postman_exported_using": "Postman/11.40.0-250406-2333"
 }

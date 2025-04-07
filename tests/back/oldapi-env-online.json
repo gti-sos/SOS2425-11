@@ -1,0 +1,21 @@
+{
+	"id": "351975c0-7813-4c9b-991e-8d64d370cd56",
+	"name": "online",
+	"values": [
+		{
+			"key": "BASE_URL",
+			"value": "https://sos2425-11-antluqmol1-back.onrender.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "RESOURCE_ALM",
+			"value": "/api/v1/autonomy-dependence-applications",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-03-27T17:22:59.590Z",
+	"_postman_exported_using": "Postman/11.38.4-250326-2336"
+}
