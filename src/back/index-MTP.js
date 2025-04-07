@@ -56,11 +56,7 @@ function loadBackend_MTP(app, db){
     app.get(BASE_API+`/${RESOURCE_MTP}`, (request, response) => {
         console.log(`New GET to /${RESOURCE_MTP}`, request.query);
 
-<<<<<<< HEAD
         const{ year, place, ageOver, ageUnder, legal_residenceOver, legal_residenceUnder, economical_resourceOver, economical_resourceUnder, incompatible_benefitOver, incompatible_benefitUnder } = request.query;
-=======
-        const{ year, place, age, legal_residence, economical_resource, incompatible_benefit } = request.query;
->>>>>>> 3f36327 (actualizacion index, metodos nedb, src/back)
 
         //Construir el query para NEDB
         const query = {}; //Este es el objeto que NEDB usará para los filtros de las búsquedas
@@ -72,7 +68,6 @@ function loadBackend_MTP(app, db){
             query.year = parseInt(year);
         }
         if(place) query.place = place;
-<<<<<<< HEAD
 
         if(ageOver || ageUnder) {
             query.request.age = {};
@@ -94,12 +89,6 @@ function loadBackend_MTP(app, db){
             if(incompatible_benefitOver) query.request.incompatible_benefit.$gte = parseInt(incompatible_benefitOver);
             if(incompatible_benefitUnder) query.request.incompatible_benefit.$lte = parseInt(incompatible_benefitUnder);
         }
-=======
-        if(age) query.age = parseInt(age);
-        if(legal_residence) query.legal_residence = parseInt(legal_residence);
-        if(economical_resource) query.economical_resource = parseInt(economical_resource);
-        if(incompatible_benefit) query.incompatible_benefit = parseInt(incompatible_benefit);
->>>>>>> 3f36327 (actualizacion index, metodos nedb, src/back)
 
         //Paginación
         const limitNum = parseInt(limit) || 10;
