@@ -23,7 +23,6 @@ app.use(express.json()); // Habilita el parsing de JSON en las peticiones
 
 app.get('/', (request, response) =>{
     response.send(`Este es el servidor del <a href="/about">grupo 11</a><br>
-        <a href="/cool">Cool</a><br>
         <a href="/samples/EBT">Algoritmo EBT</a>
         <a href="/samples/ALM">Algoritmo ALM</a>
         <a href="/samples/MTP">Algoritmo MTP</a>`);
