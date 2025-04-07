@@ -4,6 +4,7 @@ import express from 'express';
 import Datastore from 'nedb';
 import { loadBackend_ALM } from './src/back/index-ALM.js';
 import { loadBackend_EBT } from './src/back/index-EBT.js';
+import { loadBackend_MTP } from './src/back/index-MTP.js';
 
 const app = express();
 const PORT = process.env.PORT || 16078;
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 16078;
 
 const db_ALM = new Datastore();
 const db_EBT = new Datastore();
+const db_MTP = new Datastore();
 
 // Middleware
 app.use("/", express.static("./public/"));
@@ -40,6 +42,7 @@ app.get('/api/v1/social-pension-payrolls/docs', (request, response) => {
 // Cargar el backend
 loadBackend_ALM(app, db_ALM);
 loadBackend_EBT(app, db_EBT);
+loadBackend_MTP(app, db_MTP);
 
 // Iniciar el servidor
 app.listen(PORT, () => {
