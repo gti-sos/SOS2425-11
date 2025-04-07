@@ -24,9 +24,15 @@ app.use(express.json()); // Habilita el parsing de JSON en las peticiones
 app.get('/', (request, response) =>{
     response.send(`Este es el servidor del <a href="/about">grupo 11</a><br>
         <a href="/cool">Cool</a><br>
-        <a href="/samples/EBT">Algoritmo EBT</a>
+        <a href="/api/v1/social-pension-payrolls/">API EBT</a>
+
         <a href="/samples/ALM">Algoritmo ALM</a>
         <a href="/samples/MTP">Algoritmo MTP</a>`);
+}
+);
+
+app.get('/api/v1/social-pension-payrolls/docs', (request, response) => {
+    response.redirect('https://documenter.getpostman.com/view/42128153/2sB2cUCP7v');
 }
 );
 
