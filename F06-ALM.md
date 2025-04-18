@@ -3,48 +3,48 @@
 ## 🎨 Requisitos individuales por alumno - Frontend (UI)
 
 ### 🏗️ Configuración Inicial
-- [ ] Inicializar proyecto Svelte.
-- [ ] Instalar dependencias (router, cliente HTTP, etc.).
-- [ ] Configurar estructura básica (componentes, rutas).
+- [X] Inicializar proyecto Svelte.
+- [X] Instalar dependencias (router, cliente HTTP, etc.).
+- [X] Configurar estructura básica (componentes, rutas).
 
 ### 📄 Vista de Lista de Recursos
-- [ ] Crear componente Svelte para la tabla/lista.
-- [ ] Implementar llamada a la API (GET /collection) al cargar.
-- [ ] Mostrar datos en una tabla HTML.
-- [ ] Añadir botón "Borrar Todo" (sin funcionalidad aún).
-- [ ] Añadir botón "Crear Nuevo" (sin funcionalidad aún).
-- [ ] Añadir controles de búsqueda (inputs, selects) (sin funcionalidad aún).
-- [ ] Añadir botones "Editar" y "Borrar" por cada fila (sin funcionalidad aún).
+- [X] Crear componente Svelte para la tabla/lista.
+- [X] Implementar llamada a la API (GET /collection) al cargar.
+- [X] Mostrar datos en una tabla HTML.
+- [X] Añadir botón "Borrar Todo" (sin funcionalidad aún).
+- [X] Añadir botón "Crear Nuevo" (sin funcionalidad aún).
+- [X] Añadir controles de búsqueda (inputs, selects) (sin funcionalidad aún).
+- [X] Añadir botones "Editar" y "Borrar" por cada fila (sin funcionalidad aún).
 
 ### ✨ Crear Recursos
-- [ ] Crear formulario HTML para la creación.
-- [ ] Implementar función para enviar datos (POST /collection).
-- [ ] Integrar formulario en la UI (ej. modal o sección separada).
-- [ ] Limpiar formulario tras creación exitosa.
+- [X] Crear formulario HTML para la creación.
+- [X] Implementar función para enviar datos (POST /collection).
+- [X] Integrar formulario en la UI (ej. modal o sección separada).
+- [X] Limpiar formulario tras creación exitosa.
 
 ### 🗑️ Borrar Recursos
-- [ ] Implementar función para borrar un recurso (DELETE /resource/:id...). 
-- [ ] Asociar función al botón "Borrar" de cada fila.
-- [ ] Añadir diálogo de confirmación antes de borrar.
-- [ ] Implementar función para borrar todos los recursos (DELETE /collection).
-- [ ] Asociar función al botón "Borrar Todo".
-- [ ] Añadir diálogo de confirmación antes de borrar todo.
+- [X] Implementar función para borrar un recurso (DELETE /resource/:id...). 
+- [X] Asociar función al botón "Borrar" de cada fila.
+- [X] Añadir diálogo de confirmación antes de borrar.
+- [X] Implementar función para borrar todos los recursos (DELETE /collection).
+- [X] Asociar función al botón "Borrar Todo".
+- [X] Añadir diálogo de confirmación antes de borrar todo.
 
 ### ✏️ Editar Recursos (Vista Separada)
-- [ ] Crear componente Svelte para la vista de edición.
-- [ ] Configurar ruta dinámica (ej. `/edit/:id` o `/edit/:field1/:field2`).
-- [ ] Implementar navegación desde el botón "Editar" de la lista a esta vista.
-- [ ] Implementar carga de datos del recurso (GET /resource/:id...) al entrar en la vista.
-- [ ] Crear formulario HTML pre-rellenado con los datos del recurso.
-- [ ] Implementar función para guardar cambios (PUT /resource/:id...). 
-- [ ] Implementar navegación de vuelta a la lista tras guardar.
+- [X] Crear componente Svelte para la vista de edición.
+- [X] Configurar ruta dinámica (ej. `/edit/:id` o `/edit/:field1/:field2`).
+- [X] Implementar navegación desde el botón "Editar" de la lista a esta vista.
+- [X] Implementar carga de datos del recurso (GET /resource/:id...) al entrar en la vista.
+- [X] Crear formulario HTML pre-rellenado con los datos del recurso.
+- [X] Implementar función para guardar cambios (PUT /resource/:id...). 
+- [X] Implementar navegación de vuelta a la lista tras guardar.
 
 ### 🔍 Búsqueda de Recursos
-- [ ] Implementar función para construir URL de búsqueda (con `?param1=X&param2=Y`).
-- [ ] Implementar función para ejecutar la búsqueda (GET /collection?params...). 
-- [ ] Asociar la función a los controles de búsqueda (ej. al cambiar valor o pulsar botón).
-- [ ] Actualizar la tabla con los resultados de la búsqueda.
-- [ ] Asegurar que se pueden usar todos los parámetros de búsqueda de la API.
+- [X] Implementar función para construir URL de búsqueda (con `?param1=X&param2=Y`).
+- [X] Implementar función para ejecutar la búsqueda (GET /collection?params...). 
+- [X] Asociar la función a los controles de búsqueda (ej. al cambiar valor o pulsar botón).
+- [X] Actualizar la tabla con los resultados de la búsqueda.
+- [X] Asegurar que se pueden usar todos los parámetros de búsqueda de la API.
 
 ### ✨ Interfaz de Usuario y Experiencia
 - [ ] **Idioma**: Todos los textos (botones, etiquetas, títulos) en español.

@@ -1,4 +1,3 @@
-
 // const app = express();
 // const PORT = process.env.PORT || 16078;
 const BASE_API = "/api/v1";
@@ -7,7 +6,7 @@ const RESOURCE_MTP = "management-evolutions";
 const RESOURCE_EBT = "social-pension-payrolls";
 
 import express from 'express';
-import Datastore from 'nedb';
+import Datastore from '@seald-io/nedb';
 import path from 'path';
 import { fileURLToPath } from 'url';
 

@@ -22,5 +22,8 @@
     "test:back": "npm run test    --workspace=src/back",
     "test:all": "npm-run-all --parallel test:back",
     "clean": "npm run clean:back && npm run clean:front"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }
