@@ -1,10 +1,10 @@
 
 // const app = express();
 // const PORT = process.env.PORT || 16078;
-// const BASE_API = "/api/v1";
-// const RESOURCE_ALM = "autonomy-dependence-applications";
-// const RESOURCE_MTP = "management-evolutions";
-// const RESOURCE_EBT = "social-pension-payrolls"; 
+const BASE_API = "/api/v1";
+const RESOURCE_ALM = "autonomy-dependence-applications";
+const RESOURCE_MTP = "management-evolutions";
+const RESOURCE_EBT = "social-pension-payrolls";
 
 import express from 'express';
 import Datastore from 'nedb';
@@ -14,18 +14,12 @@ import { fileURLToPath } from 'url';
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { loadBackend_ALM } from './src/back/index-ALM.js';
-import { loadBackend_EBT } from './src/back/index-EBT.js';
-import { loadBackend_MTP } from './src/back/index-MTP.js';
+import { loadBackend_ALM } from './index-ALM.js';
+import { loadBackend_EBT } from './index-EBT.js';
+import { loadBackend_MTP } from './index-MTP.js';
 
 const app = express();
 const PORT = process.env.PORT || 16078;
-
-// Configuración de NeDB
-// const db_ALM = new Datastore({ 
-//     filename: './src/back/data-ALM.db', 
-//     autoload: true 
-// });
 
 const db_ALM = new Datastore();
 const db_EBT = new Datastore();
@@ -37,21 +31,28 @@ app.use(express.json()); // Habilita el parsing de JSON en las peticiones
 
 app.use("/about", express.static(path.join(__dirname, "public", "about.html")));
 
-app.get('/', (request, response) =>{
+app.get('/', (request, response) => {
     response.send(`Este es el servidor del <a href="/about">grupo 11</a><br>
-        <a href="/cool">Cool</a><br>
+        <a href="/about">About</a><br>
         <a href="/api/v1/social-pension-payrolls/docs/">API EBT</a>
-
-        <a href="/samples/ALM">Algoritmo ALM</a>
-        <a href="/samples/MTP">Algoritmo MTP</a>`);
+        <a href="/api/v1/autonomy-dependence-applications/docs/">API ALM</a>
+        <a href="/api/v1/management-evolutions/docs/">API MTP</a>
+        `);
 }
 );
 
 app.get('/api/v1/social-pension-payrolls/docs', (request, response) => {
     response.redirect('https://documenter.getpostman.com/view/42128153/2sB2cUCP7v');
-}
-);
+});
 
+app.get(BASE_API + `/${RESOURCE_ALM}/docs`, (request, response) => {
+    return response.redirect("https://documenter.getpostman.com/view/42116317/2sAYkLnxYU");
+});
+
+app.get(BASE_API + `/${RESOURCE_MTP}/docs`, (request, response) => {
+    return response.redirect("https://documenter.getpostman.com/view/42116317/2sAYkLnxYU");
+
+});
 
 // Cargar el backend
 loadBackend_ALM(app, db_ALM);
