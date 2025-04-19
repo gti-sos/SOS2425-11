@@ -3,11 +3,13 @@ const RESOURCE_MTP = "management-evolutions";
 
 function loadBackend_MTP(app, db){
 
-    //Redirect a la documentación 
+    //Redirect a la documentación
+    /*
     app.get(BASE_API+`/${RESOURCE_MTP}`, (request, response) => {
         return response.redirect("https://documenter.getpostman.com/view/42116317/2sAYkLnxYU");
 
-    });
+    }); 
+    */
 
 // Operaciones con colecciones de datos
 //LoadInitialData
