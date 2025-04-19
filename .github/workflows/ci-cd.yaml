@@ -10,6 +10,8 @@ jobs:
         run: npm install
       - name: Build front
         run: npm run build:front
+      - name: Show env file content
+        run: cat ../../tests/back/api-env-local.json
       - name: Run tests
         run: npm run test:back
       - name: Deploy to Render
