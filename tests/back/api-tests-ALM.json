@@ -304,7 +304,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "// 405 Method Not Allowed, (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS):\n{\n  \"population\": 9000000,\n  \"dependent_population\": 1100000\n}\n",
+					"raw": "{\n  \"population\": 9000000,\n  \"dependent_population\": 1100000\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
