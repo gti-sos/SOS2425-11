@@ -23,6 +23,13 @@ const PORT = process.env.PORT || 16078;
 const db_ALM = new Datastore();
 const db_EBT = new Datastore();
 const db_MTP = new Datastore();
+app.use((req, res, next) => {
+    console.log(`--> Request Received: ${req.method} ${req.path}`);
+    console.log("    Headers:", req.headers);
+    // Importante: No intentes leer req.body aquí antes de express.json()
+    next(); // Pasa a la siguiente función middleware
+});
+
 
 // Middleware
 app.use("/", express.static("./public/"));

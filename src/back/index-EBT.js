@@ -59,18 +59,6 @@ function loadBackend_EBT(app, db) {
         const limitNum = parseInt(limit) || 10
         const offsetNum = parseInt(offset) || 0
 
-        db.find({}, (err, contacts) => {
-            if (contacts.length === 0) {
-                console.log("No hay datos en la base de datos. Cargando datos iniciales...");
-                db.insert(dataEBT, (err, newDocs) => {
-                    if (err) {
-                        console.error(`Error al insertar los datos: ${newDocs}`)
-                    } else {
-                        console.log("datos inciales cargados:", newDocs.length)
-                    }
-                });
-            }
-        });
 
         db.find(query).skip(offsetNum).limit(limitNum).exec((err, contacts) => {
             if (err) {
@@ -186,6 +174,8 @@ function loadBackend_EBT(app, db) {
 
     // PUT: DEVUELVE ERROR (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS)
     app.put(BASE_API + `/${RESOURCE_EBT}`, (request, response) => {
+        console.log(`!!! Reached PUT ${BASE_API}/${RESOURCE_EBT} handler !!!`);
+        console.log(`    Request Body received by route:`, request.body); // Ver qué cuerpo llega (si llega)
         console.log(`New PUT to /${RESOURCE_EBT}`);
         console.error(`Can not put a resource list`)
         return response.status(405).send(`Not allowed to PUT in a resource list`)
@@ -200,14 +190,16 @@ function loadBackend_EBT(app, db) {
 
         db.find({ place: placeName }, (err, resources) => {
             if (err) {
-                console.error(`Server Error getting resources by place : ${placeName}`)
-            } if (resources.length == 0) {
-                console.log(`No resource matches with place : ${placeName}`)
-                return response.status(404).send(`No resource matches with place : ${placeName}`)
+                console.error(`Server Error getting resources by place: ${placeName}`);
+                return response.status(500).send("Internal Server Error");
             }
-            console.log(`${resources.length} displayed`)
-            response.status(200).json(resources.map(r => { delete r._id; return r }))
-        })
+            if (!resources || resources.length === 0) {
+                console.log(`No resource matches with place: ${placeName}`);
+                return response.status(404).send(`No resource matches with place: ${placeName}`);
+            }
+            console.log(`${resources.length} displayed`);
+            response.status(200).json(resources.map(r => { delete r._id; return r; }));
+        });
     });
 
     // PUT: Si existe "recurso" actualiza los datos

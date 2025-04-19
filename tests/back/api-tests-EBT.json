@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "810846a5-a71a-4ea5-a64c-139a588858a9",
-		"name": "TEST EBT",
+		"name": "TEST API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "42128153",
 		"_collection_link": "https://grupo-11.postman.co/workspace/SOS2425~a59462c0-25f1-4090-9bc1-2c8ef5b5962f/collection/42128153-810846a5-a71a-4ea5-a64c-139a588858a9?action=share&source=collection_link&creator=42128153"
@@ -400,7 +400,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "// 405 Method Not Allowed, (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS):\n{\n  \"population\": 9000000,\n  \"dependent_population\": 1100000\n}\n",
+					"raw": "{\n  \"population\": 9000000,\n  \"dependent_population\": 1100000\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
