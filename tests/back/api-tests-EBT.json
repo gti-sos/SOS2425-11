@@ -57,7 +57,7 @@
 				"url": {
 					"raw": "{{BASE_URL}}{{RESOURCE_EBT}}",
 					"host": [
-						"{{BASE_URL}}"
+						"{{BASE_URL}}{{RESOURCE_EBT}}"
 					]
 				}
 			},
