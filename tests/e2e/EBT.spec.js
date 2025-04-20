@@ -1,8 +1,7 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { create } from 'domain';
 
-const BASE_URL = 'http://localhost:5173';
+const BASE_URL = 'http://localhost:16078';
 
 
 test.describe('EBT Application Basic Checks', () => {
