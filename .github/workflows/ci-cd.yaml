@@ -12,7 +12,13 @@ jobs:
         run: npm run build:front
       - name: Run backend
         working-directory: ./src/back
-        run: node index
+        run: node index &
+      - name: Wait for backend to start
+        run: |
+          echo "Waiting for backend to start..."
+          while ! nc -z localhost 3000; do
+            sleep 1
+          done
       - name: Run tests
         run: npm run test:back
       - name: Deploy to Render
