@@ -106,140 +106,215 @@
     onMount(fetchResource);
 </script>
 
-<main class="container mx-auto p-4">
-    <h1 class="mb-4 text-2xl font-bold">Editar Nómina de Pensión Social</h1>
-    <h2 class="mb-3 text-xl">{decodeURIComponent(place)} - {year}</h2>
+<main class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 md:p-8">
+    <div class="mx-auto max-w-3xl rounded-lg bg-white p-6 shadow-xl">
+        <h1 class="mb-2 text-3xl font-bold text-gray-800">Editar Nómina de Pensión Social</h1>
+        <h2 class="mb-6 text-xl font-semibold text-indigo-600">
+            {decodeURIComponent(place)} - {year}
+        </h2>
 
-    <!-- Mensajes -->
-    {#if successMessage}
-        <div
-            class="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
-            role="alert"
-        >
-            {successMessage}
-        </div>
-    {/if}
-    {#if errorMessage}
-        <div
-            class="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
-            role="alert"
-        >
-            <strong class="font-bold">Error:</strong>
-            {errorMessage}
-        </div>
-    {/if}
-
-    {#if isLoading && !resource}
-        <p>Cargando datos del recurso...</p>
-    {:else if resource}
-        <form on:submit={handleUpdate} class="rounded border bg-gray-50 p-4">
-            <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <!-- Campo Importe Jubilación -->
-                <div>
-                    <label for="retirement_amount" class="block text-sm font-medium text-gray-700"
-                        >Importe Jubilación (€)</label
-                    >
-                    <input
-                        type="number"
-                        step="0.01"
-                        id="retirement_amount"
-                        bind:value={resource.retirement_amount}
-                        required
-                        class="input-style mt-1 block w-full"
-                    />
-                </div>
-                <!-- Campo Importe Invalidez -->
-                <div>
-                    <label for="disability_amount" class="block text-sm font-medium text-gray-700"
-                        >Importe Invalidez (€)</label
-                    >
-                    <input
-                        type="number"
-                        step="0.01"
-                        id="disability_amount"
-                        bind:value={resource.disability_amount}
-                        required
-                        class="input-style mt-1 block w-full"
-                    />
-                </div>
-                <!-- Campo Nº Pensiones Jubilación -->
-                <div>
-                    <label for="retirement_number" class="block text-sm font-medium text-gray-700"
-                        >Nº Pensiones Jubilación</label
-                    >
-                    <input
-                        type="number"
-                        id="retirement_number"
-                        bind:value={resource.retirement_number}
-                        required
-                        class="input-style mt-1 block w-full"
-                    />
-                </div>
-                <!-- Campo Nº Pensiones Invalidez -->
-                <div>
-                    <label for="disability_number" class="block text-sm font-medium text-gray-700"
-                        >Nº Pensiones Invalidez</label
-                    >
-                    <input
-                        type="number"
-                        id="disability_number"
-                        bind:value={resource.disability_number}
-                        required
-                        class="input-style mt-1 block w-full"
-                    />
-                </div>
-
-                <!-- Mostrar place y year pero no permitir edición -->
-                <div class="mt-4 md:col-span-2">
-                    <p>
-                        <span class="text-sm font-medium text-gray-700">Comunidad Autónoma:</span>
-                        <span class="ml-2 text-gray-900">{resource.place || decodeURIComponent(place)}</span>
-                    </p>
-                    <p class="mt-1">
-                        <span class="text-sm font-medium text-gray-700">Año:</span>
-                        <span class="ml-2 text-gray-900">{resource.year || year}</span>
-                    </p>
-                </div>
+        <!-- Mensajes -->
+        {#if successMessage}
+            <div
+                class="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700 shadow-sm"
+                role="alert"
+            >
+                <span class="block sm:inline">{successMessage}</span>
             </div>
-
-            <div class="mt-4 flex justify-end gap-3">
-                <a
-                    href="/EBT"
-                    class="inline-block rounded bg-gray-500 px-4 py-2 text-center font-bold text-white hover:bg-gray-700"
-                    >Cancelar</a
-                >
-                <button
-                    type="submit"
-                    class="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-                    disabled={isLoading}
-                >
-                    {#if isLoading}
-                        Guardando...
-                    {:else}
-                        Guardar Cambios
-                    {/if}
-                </button>
+        {/if}
+        {#if errorMessage}
+            <div
+                class="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700 shadow-sm"
+                role="alert"
+            >
+                <strong class="font-bold">Error:</strong>
+                <span class="block sm:inline">{errorMessage}</span>
             </div>
-        </form>
-    {/if}
+        {/if}
+
+        {#if isLoading && !resource}
+            <div class="flex items-center justify-center py-10">
+                <svg
+                    class="mr-3 h-8 w-8 animate-spin text-indigo-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                >
+                    <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                    ></circle>
+                    <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                </svg>
+                <p class="text-lg text-gray-600">Cargando datos del recurso...</p>
+            </div>
+        {:else if resource}
+            <form on:submit={handleUpdate} class="space-y-6 rounded-md border border-gray-200 bg-gray-50/50 p-6">
+                <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                    <!-- Campo Importe Jubilación -->
+                    <div>
+                        <label for="retirement_amount" class="block text-sm font-medium leading-6 text-gray-900"
+                            >Importe Jubilación (€)</label
+                        >
+                        <div class="mt-1">
+                            <input
+                                type="number"
+                                step="0.01"
+                                id="retirement_amount"
+                                bind:value={resource.retirement_amount}
+                                required
+                                class="input-style block w-full"
+                                placeholder="Ej: 15000.50"
+                            />
+                        </div>
+                    </div>
+                    <!-- Campo Importe Invalidez -->
+                    <div>
+                        <label for="disability_amount" class="block text-sm font-medium leading-6 text-gray-900"
+                            >Importe Invalidez (€)</label
+                        >
+                        <div class="mt-1">
+                            <input
+                                type="number"
+                                step="0.01"
+                                id="disability_amount"
+                                bind:value={resource.disability_amount}
+                                required
+                                class="input-style block w-full"
+                                placeholder="Ej: 8000.75"
+                            />
+                        </div>
+                    </div>
+                    <!-- Campo Nº Pensiones Jubilación -->
+                    <div>
+                        <label for="retirement_number" class="block text-sm font-medium leading-6 text-gray-900"
+                            >Nº Pensiones Jubilación</label
+                        >
+                        <div class="mt-1">
+                            <input
+                                type="number"
+                                id="retirement_number"
+                                bind:value={resource.retirement_number}
+                                required
+                                class="input-style block w-full"
+                                placeholder="Ej: 1200"
+                            />
+                        </div>
+                    </div>
+                    <!-- Campo Nº Pensiones Invalidez -->
+                    <div>
+                        <label for="disability_number" class="block text-sm font-medium leading-6 text-gray-900"
+                            >Nº Pensiones Invalidez</label
+                        >
+                        <div class="mt-1">
+                            <input
+                                type="number"
+                                id="disability_number"
+                                bind:value={resource.disability_number}
+                                required
+                                class="input-style block w-full"
+                                placeholder="Ej: 350"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Mostrar place y year pero no permitir edición -->
+                    <div class="mt-4 rounded-md border border-dashed border-gray-300 bg-gray-100 p-4 md:col-span-2">
+                        <p class="text-sm">
+                            <span class="font-medium text-gray-700">Comunidad Autónoma:</span>
+                            <span class="ml-2 font-semibold text-gray-900">{resource.place || decodeURIComponent(place)}</span>
+                        </p>
+                        <p class="mt-1 text-sm">
+                            <span class="font-medium text-gray-700">Año:</span>
+                            <span class="ml-2 font-semibold text-gray-900">{resource.year || year}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex items-center justify-end gap-x-4 border-t border-gray-900/10 pt-6">
+                    <a
+                        href="/EBT"
+                        class="rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 transition duration-150 ease-in-out hover:bg-gray-300"
+                        >Cancelar</a
+                    >
+                    <button
+                        type="submit"
+                        class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition duration-150 ease-in-out hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={isLoading}
+                    >
+                        {#if isLoading}
+                            <div class="flex items-center">
+                                <svg
+                                    class="-ml-1 mr-2 h-5 w-5 animate-spin text-white"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        class="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        stroke-width="4"
+                                    ></circle>
+                                    <path
+                                        class="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    ></path>
+                                </svg>
+                                Guardando...
+                            </div>
+                        {:else}
+                            Guardar Cambios
+                        {/if}
+                    </button>
+                </div>
+            </form>
+        {/if}
+    </div>
 </main>
 
 <style>
-    /* Estilos reutilizados para inputs */
+    /* Estilos reutilizados y mejorados para inputs */
     .input-style {
         border-radius: 0.375rem; /* rounded-md */
-        border: 1px solid rgb(209 213 219); /* border border-gray-300 */
+        border: 1px solid #d1d5db; /* border-gray-300 */
         padding: 0.5rem 0.75rem; /* px-3 py-2 */
-        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* shadow-sm */
+        background-color: white;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
         font-size: 0.875rem; /* text-sm */
-        line-height: 1.25rem; /* text-sm */
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        line-height: 1.25rem;
+        color: #111827; /* text-gray-900 */
+        transition:
+            border-color 0.15s ease-in-out,
+            box-shadow 0.15s ease-in-out;
+    }
+    .input-style::placeholder {
+        color: #9ca3af; /* placeholder-gray-400 */
     }
     .input-style:focus {
-        outline: 2px solid transparent; /* focus:outline-none */
+        outline: 2px solid transparent;
         outline-offset: 2px;
-        border-color: rgb(99 102 241); /* focus:border-indigo-500 */
-        /* Simulate focus:ring-indigo-500 with box-shadow */
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
+        border-color: #4f46e5; /* focus:border-indigo-600 */
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3); /* focus:ring-indigo-600/30 */
+    }
+    /* Remove spinners from number inputs */
+    .input-style[type='number']::-webkit-inner-spin-button,
+    .input-style[type='number']::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    .input-style[type='number'] {
+        -moz-appearance: textfield; /* Firefox */
     }
 </style>
