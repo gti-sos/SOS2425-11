@@ -7,14 +7,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Install dependences
-        run: npm ci
-      - name: Install backend specific dependencies (if needed)
-        working-directory: ./src/back
-        run: npm ci
+        run: npm install
       - name: Build front
         run: npm run build:front
-      - name: Show env file content
-        run: cat ./tests/back/api-env-local.json
+      - name: Run backend
+        working-directory: ./src/back
+        run: node index
       - name: Run tests
         run: npm run test:back
       - name: Deploy to Render
