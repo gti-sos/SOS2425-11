@@ -18,5 +18,8 @@ jobs:
         run: npm run start &
       - name: Run tests
         run: npm run test:back
-
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npx playwright test
         
