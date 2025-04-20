@@ -4,21 +4,16 @@ jobs:
   ci-cd:
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.20.8'
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Install dependences
         run: npm install
       - name: Build front
         run: npm run build:front
-      - name: Run backend
-        working-directory: ./src/back
-        run: node index &
-      - name: Wait for backend to start
-        run: |
-          echo "Waiting for backend to start..."
-          while ! nc -z localhost 16078; do
-            sleep 1
-          done
       - name: Run tests
         run: npm run test:back
       - name: Deploy to Render
