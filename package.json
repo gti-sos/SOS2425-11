@@ -20,7 +20,7 @@
     "dev:front": "npm run dev   --workspace=src/front",
     "dev:all": "concurrently \"npm:dev:front\" \"npm:start:back\"",
     "build:front": "npm run build   --workspace=src/front",
-    "test:back": "npm run test    --workspace=src/back",
+    "test:back": "npm run test-api-local    --workspace=src/back",
     "test:all": "npm-run-all --parallel test:back",
     "start": "node index.js",
     "clean": "npm run clean:back && npm run clean:front"
