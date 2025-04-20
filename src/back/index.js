@@ -66,6 +66,5 @@ loadBackend_EBT(app, db_EBT);
 loadBackend_MTP(app, db_MTP);
 
 // Iniciar el servidor
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+
+export{loadBackend_EBT, loadBackend_ALM, loadBackend_MTP, db_ALM, db_EBT, db_MTP};
