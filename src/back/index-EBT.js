@@ -12,6 +12,8 @@ function loadBackend_EBT(app, db) {
 
         const { year,
             place,
+            from, // Añadido
+            to,   // Añadido
             retirement_amountOver,
             retirement_amountUnder,
             disability_amountOver,
@@ -27,21 +29,45 @@ function loadBackend_EBT(app, db) {
         const query = {};
         if (place) query.place = place;
 
+        // Validación y construcción de la consulta para el año
         if (year && !/^\d{4}$/.test(year)) {
-            return response.status(400).json({ error: "Invalid year" });
+            return response.status(400).json({ error: "Invalid year format. Use YYYY." });
         }
-        if (year) query.year = parseInt(year);
+        const fromYear = parseInt(from);
+        const toYear = parseInt(to);
 
+        if (from && !/^\d{4}$/.test(from)) {
+             return response.status(400).json({ error: "Invalid 'from' year format. Use YYYY." });
+        }
+         if (to && !/^\d{4}$/.test(to)) {
+             return response.status(400).json({ error: "Invalid 'to' year format. Use YYYY." });
+        }
+
+        if (from && to && fromYear > toYear) {
+            return response.status(400).json({ error: "'from' year cannot be greater than 'to' year." });
+        }
+
+        // Priorizar from/to sobre year si ambos están presentes
+        if (from || to) {
+            query.year = {};
+            if (from) query.year.$gte = fromYear;
+            if (to) query.year.$lte = toYear;
+        } else if (year) {
+            query.year = parseInt(year);
+        }
+
+
+        // Resto de filtros numéricos
         if (retirement_amountOver || retirement_amountUnder) {
             query.retirement_amount = {};
-            if (retirement_amountOver) query.retirement_amount.$gte = parseInt(retirement_amountOver);
-            if (retirement_amountUnder) query.retirement_amount.$lte = parseInt(retirement_amountUnder);
+            if (retirement_amountOver) query.retirement_amount.$gte = parseFloat(retirement_amountOver);
+            if (retirement_amountUnder) query.retirement_amount.$lte = parseFloat(retirement_amountUnder);
         }
 
         if (disability_amountOver || disability_amountUnder) {
             query.disability_amount = {};
-            if (disability_amountOver) query.disability_amount.$gte = parseInt(disability_amountOver);
-            if (disability_amountUnder) query.disability_amount.$lte = parseInt(disability_amountUnder)
+            if (disability_amountOver) query.disability_amount.$gte = parseFloat(disability_amountOver);
+            if (disability_amountUnder) query.disability_amount.$lte = parseFloat(disability_amountUnder)
         }
 
         if (retirement_numberOver || retirement_numberUnder) {
@@ -65,21 +91,36 @@ function loadBackend_EBT(app, db) {
                 console.error(`Error: ${err}`)
                 return response.status(500).send("Internal Error")
             }
-            if (!contacts || contacts.length === 0) {
-                db.count({}, (err, count) => {
-                    if (err) {
-                        console.error(`Error: ${err}`)
-                        return response.status(500).send("Internal Error")
-                    }
-                    if (count == 0) {
-                        console.log("Database empty, loading data")
-                        return response.redirect(BASE_API + `/${RESOURCE_EBT}/loadInitialData`)
-                    }
-                    console.log("No data found with the query:", query)
-                    return response.status(404).send("No data matches the query")
-                })
+            // Comprobar si la base de datos está vacía solo si no hay filtros específicos
+             if (!contacts || contacts.length === 0) {
+                // Solo redirigir a loadInitialData si no se aplicaron filtros y la BD está vacía
+                if (Object.keys(query).length === 0) {
+                     db.count({}, (err, count) => {
+                        if (err) {
+                            console.error(`Error counting documents: ${err}`);
+                            return response.status(500).send("Internal Error");
+                        }
+                        if (count === 0) {
+                            console.log("Database empty, redirecting to load initial data.");
+                            // Asegúrate de que la redirección sea manejada correctamente por el cliente
+                            // o considera cargar los datos aquí directamente si la redirección no es ideal.
+                            // Por simplicidad, mantenemos la redirección, pero ten en cuenta sus implicaciones.
+                             return response.redirect(BASE_API + `/${RESOURCE_EBT}/loadInitialData`);
+                        } else {
+                             // Hay datos en la BD, pero ninguno coincide con la consulta (que estaba vacía)
+                             // Esto no debería ocurrir lógicamente si count > 0, pero por si acaso:
+                             console.log("No data found matching the empty query, though DB is not empty.");
+                             return response.status(404).send("No data matches the query");
+                        }
+                    });
+                } else {
+                     // Se aplicaron filtros, pero no hubo coincidencias
+                     console.log("No data found with the query:", query);
+                     return response.status(404).send("No data matches the query");
+                }
             } else {
-                response.status(200).json(contacts.map(r => { delete r._id; return r }))
+                // Se encontraron datos que coinciden con la consulta
+                response.status(200).json(contacts.map(r => { delete r._id; return r; }));
             }
         })
 
@@ -118,7 +159,7 @@ function loadBackend_EBT(app, db) {
                     return response.status(500).send("Internal server error")
                 }
                 console.log("Data upload successful")
-                response.status(201).send("Data loaded")
+                response.status(201).json("Data loaded")
             });
         });
     });

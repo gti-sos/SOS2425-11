@@ -203,7 +203,7 @@
 
 	function handleEdit(place, year) {
 		// Navegar a la página de edición (asumiendo que existe)
-		goto(`/edit/${encodeURIComponent(place)}/${year}`);
+		goto(`/ALM/edit/${encodeURIComponent(place)}/${year}`);
 	}
 
 	// --- Funciones de Búsqueda ---

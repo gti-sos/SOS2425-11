@@ -1,9 +1,9 @@
 <script>
     let menuItems = [
         { name: "Inicio", link: "/" },
-        { name: "Api ALM", link: "/ALM" },
-        { name: "About", link: "/about" },
-        { name: "Contacto", link: "/contact" }
+        { name: "API ALM", link: "/ALM" },
+        { name: "API EBT", link: "/EBT" },
+        { name: "About", link: "/about" }
     ];
 </script>
 
