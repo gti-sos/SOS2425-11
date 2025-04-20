@@ -106,6 +106,11 @@
     onMount(fetchResource);
 </script>
 
+<svelte:head>
+    <title>Editar Nómina - {decodeURIComponent(place)} ({year})</title>
+    <meta name="description" content="Página para editar los detalles de una nómina de pensión social específica." />
+</svelte:head>
+
 <main class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 md:p-8">
     <div class="mx-auto max-w-3xl rounded-lg bg-white p-6 shadow-xl">
         <h1 class="mb-2 text-3xl font-bold text-gray-800">Editar Nómina de Pensión Social</h1>

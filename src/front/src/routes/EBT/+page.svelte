@@ -370,6 +370,10 @@
     });
 </script>
 
+<svelte:head>
+    <title>EBT Data</title>
+</svelte:head>
+
 <main class="min-h-screen bg-gradient-to-br from-blue-100 via-white to-green-100 p-4 md:p-8">
     <div class="container mx-auto max-w-7xl">
         <h1 class="mb-6 text-center text-4xl font-extrabold text-gray-800 tracking-tight">
