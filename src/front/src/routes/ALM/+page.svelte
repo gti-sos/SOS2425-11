@@ -7,9 +7,9 @@
 
 	let resources = [];
 	let isLoading = true;
-	let apiError = null; // Renombrado para diferenciar de errores de operación
-	let successMessage = null;
-	let errorMessage = null; // Para errores específicos de operaciones (Crear, Borrar)
+	let apiError = null; // Para errores generales de carga o conexión
+	let successMessage = null; // Para mensajes de éxito de operaciones
+	let errorMessage = null; // Para errores específicos de operaciones (Crear, Borrar, Editar)
 
 	// Estado para el formulario de creación
 	let newResource = {
@@ -51,40 +51,65 @@
 	];
 
 	// --- Funciones de API ---
-	async function fetchResources(searchParams = '') {
+	async function fetchResources(searchParams = '', preserveMessages = false) {
 		isLoading = true;
-		apiError = null; // Limpiar error de API anterior
-		successMessage = null; // Limpiar mensajes anteriores
-		errorMessage = null;
+		// Clear general API error unless preserving messages from a previous action
+		if (!preserveMessages) {
+			apiError = null;
+			// Also clear action-specific messages if not preserving
+			successMessage = null;
+			errorMessage = null;
+		} else {
+			// If preserving, clear only the general apiError,
+			// let success/error messages from actions persist for this render cycle.
+			apiError = null;
+		}
+
 		try {
 			const response = await fetch(`${API_URL}${searchParams}`);
 			if (!response.ok) {
+				// If fetch fails now, clear any preserved success message
+				if (preserveMessages) successMessage = null;
 				if (response.status === 404) {
-					// Si no hay query, y da 404, puede que la BD esté vacía -> redirigir a loadInitialData? No, mejor mostrar mensaje.
 					if (!searchParams) {
 						apiError =
-							'La base de datos parece estar vacía o no se pudo conectar. Mostrando datos de ejemplo.';
+							'No se pudieron cargar los datos. Es posible que no haya registros o haya un problema de conexión. Se muestran datos de ejemplo.';
 						resources = exampleResources;
 					} else {
 						apiError =
-							'No se encontraron recursos con los criterios de búsqueda especificados. Mostrando datos de ejemplo.';
-						resources = exampleResources;
+							'No se encontraron registros que coincidan con tu búsqueda, prueba otra distinta.';
 					}
-					console.warn(apiError);
+					console.warn(`API returned 404 for ${API_URL}${searchParams}`);
 				} else {
-					throw new Error(`Error ${response.status}: ${response.statusText}`);
+					const errorText = await response.text();
+					apiError = `Error al cargar: Problema de comunicación con el servidor (Código: ${response.status}). Se muestran datos de ejemplo.`;
+					console.error(
+						`HTTP Error ${response.status}: ${response.statusText}. Body: ${errorText}`
+					);
+					resources = exampleResources; // Mostrar ejemplos en caso de error
 				}
 			} else {
+				// If fetch succeeds now, clear any preserved error message
+				if (preserveMessages) errorMessage = null;
 				const data = await response.json();
 				resources = Array.isArray(data) ? data : [data]; // Asegurarse de que siempre sea un array
 				if (resources.length === 0 && !searchParams) {
-					apiError =
-						'No hay datos disponibles. Puedes añadir nuevos recursos o cargar datos iniciales si es posible.';
+					// Don't overwrite a success/error message if we are preserving it
+					if (!preserveMessages) {
+						apiError = 'No hay registros disponibles. Puedes empezar añadiendo uno nuevo.';
+					}
+				} else if (resources.length === 0 && searchParams) {
+					// Mensaje específico si la búsqueda no devuelve resultados pero la conexión fue OK
+					if (!preserveMessages) {
+						apiError = 'No se encontraron registros que coincidan con los filtros aplicados.';
+					}
 				}
 			}
 		} catch (err) {
-			apiError = `Error al cargar los recursos: ${err.message}. Mostrando datos de ejemplo.`;
-			console.error(apiError);
+			// If fetch fails due to network/parsing, clear any preserved success message
+			if (preserveMessages) successMessage = null;
+			apiError = `Error al cargar los datos: No se pudo conectar con el servidor o procesar la respuesta. Se muestran datos de ejemplo.`;
+			console.error('Fetch error:', err);
 			resources = exampleResources;
 		} finally {
 			isLoading = false;
@@ -97,22 +122,38 @@
 		successMessage = null;
 		isLoading = true;
 		try {
+			const payload = {
+				...newResource,
+				// Asegurarse de que los números son números o null si están vacíos
+				year: parseInt(newResource.year) || null,
+				population: parseInt(newResource.population) || null,
+				dependent_population: parseInt(newResource.dependent_population) || null,
+				request: parseInt(newResource.request) || null
+			};
+
+			// Validar que los campos requeridos no sean null después de la conversión
+			if (
+				!payload.place ||
+				payload.year === null ||
+				payload.population === null ||
+				payload.dependent_population === null ||
+				payload.request === null
+			) {
+				errorMessage =
+					'Error al añadir: Por favor, asegúrate de que todos los campos estén completos y sean correctos.';
+				isLoading = false; // Detener aquí
+				return;
+			}
+
 			const response = await fetch(API_URL, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({
-					...newResource,
-					// Asegurarse de que los números son números
-					year: parseInt(newResource.year) || null,
-					population: parseInt(newResource.population) || null,
-					dependent_population: parseInt(newResource.dependent_population) || null,
-					request: parseInt(newResource.request) || null
-				})
+				body: JSON.stringify(payload)
 			});
 			if (response.status === 201) {
-				successMessage = 'Recurso creado correctamente.';
+				successMessage = 'Registro añadido correctamente.'; // Establecer mensaje PRIMERO
 				// Limpiar formulario
 				newResource = {
 					place: '',
@@ -121,20 +162,29 @@
 					dependent_population: null,
 					request: null
 				};
-				await fetchResources(); // Recargar la lista
+				await fetchResources('', true); // Recargar la lista, CONSERVANDO el mensaje
 			} else if (response.status === 400) {
-				errorMessage = 'Error al crear: Datos inválidos o faltantes.';
-				console.error('Error 400:', await response.text());
+				const errorBody = await response.text();
+				errorMessage =
+					'Error al añadir: Los datos proporcionados no son válidos. Por favor, revísalos.';
+				console.error('Error 400 - Bad Request:', errorBody);
 			} else if (response.status === 409) {
-				errorMessage = 'Error al crear: El recurso (Comunidad y Año) ya existe.';
+				errorMessage =
+					'Error al añadir: Ya existe un registro para esa Comunidad Autónoma y ese año.';
 			} else {
-				throw new Error(`Error ${response.status}: ${response.statusText}`);
+				const errorText = await response.text();
+				errorMessage = `Error al añadir: Problema inesperado en el servidor (Código: ${response.status}). Inténtalo de nuevo.`;
+				console.error(`Error ${response.status}: ${response.statusText}. Body: ${errorText}`);
 			}
 		} catch (err) {
-			errorMessage = `Error al crear el recurso: ${err.message}`;
-			console.error(errorMessage);
+			errorMessage = `Error al añadir: Ocurrió un problema de conexión al intentar guardar el registro. Inténtalo de nuevo más tarde.`;
+			console.error('Create error:', err);
 		} finally {
-			isLoading = false;
+			// Solo poner isLoading a false si no hubo mensaje de éxito,
+			// porque fetchResources se encargará si lo hubo.
+			if (!successMessage) {
+				isLoading = false;
+			}
 		}
 	}
 
@@ -151,19 +201,26 @@
 				const response = await fetch(`${API_URL}/${encodeURIComponent(place)}/${year}`, {
 					method: 'DELETE'
 				});
-				if (response.status === 204) {
-					successMessage = `Recurso de ${place} (${year}) borrado correctamente.`;
-					await fetchResources(); // Recargar la lista
+				if (response.status === 204 || response.status === 200) {
+					// 200 OK también es válido para DELETE
+					successMessage = `El registro de ${place} (${year}) se ha borrado correctamente.`; // Establecer mensaje PRIMERO
+					await fetchResources('', true); // Recargar la lista, CONSERVANDO el mensaje
 				} else if (response.status === 404) {
-					errorMessage = 'Error al borrar: El recurso no fue encontrado.';
+					errorMessage = 'Error al borrar: No se pudo encontrar el registro que intentas eliminar.';
+					console.warn(`DELETE request for ${place}/${year} returned 404`);
 				} else {
-					throw new Error(`Error ${response.status}: ${response.statusText}`);
+					const errorText = await response.text();
+					errorMessage = `Error al borrar: Problema inesperado en el servidor (Código: ${response.status}). Inténtalo de nuevo.`;
+					console.error(`Error ${response.status}: ${response.statusText}. Body: ${errorText}`);
 				}
 			} catch (err) {
-				errorMessage = `Error al borrar el recurso: ${err.message}`;
-				console.error(errorMessage);
+				errorMessage = `Error al borrar: Ocurrió un problema de conexión al intentar eliminar el registro. Inténtalo de nuevo más tarde.`;
+				console.error('Delete error:', err);
 			} finally {
-				isLoading = false;
+				// Solo poner isLoading a false si no hubo mensaje de éxito.
+				if (!successMessage) {
+					isLoading = false;
+				}
 			}
 		}
 	}
@@ -173,7 +230,7 @@
 		successMessage = null;
 		if (
 			window.confirm(
-				'¿Estás seguro de que quieres borrar TODOS los recursos? Esta acción no se puede deshacer.'
+				'¿Estás seguro de que quieres borrar TODOS los registros? Esta acción no se puede deshacer.'
 			)
 		) {
 			isLoading = true;
@@ -181,35 +238,45 @@
 				const response = await fetch(API_URL, {
 					method: 'DELETE'
 				});
-				if (response.status === 204) {
-					successMessage = 'Todos los recursos han sido borrados correctamente.';
-					await fetchResources(); // Recargar la lista (debería estar vacía)
+				if (response.status === 204 || response.status === 200) {
+					successMessage = 'Todos los registros se han borrado correctamente.'; // Establecer mensaje PRIMERO
+					await fetchResources('', true); // Recargar la lista, CONSERVANDO el mensaje
+				} else if (response.status === 404) {
+					// Considerar esto informativo, no un error.
+					successMessage = 'No había registros para borrar.';
+					await fetchResources('', true); // Recargar para mostrar estado vacío correctamente, conservando mensaje
 				} else {
-					// La API devuelve 404 si no hay nada que borrar, tratarlo como éxito parcial?
-					if (response.status === 404) {
-						errorMessage = 'No se encontraron recursos para borrar.';
-					} else {
-						throw new Error(`Error ${response.status}: ${response.statusText}`);
-					}
+					const errorText = await response.text();
+					errorMessage = `Error al borrar todo: Problema inesperado en el servidor (Código: ${response.status}). Inténtalo de nuevo.`;
+					console.error(`Error ${response.status}: ${response.statusText}. Body: ${errorText}`);
 				}
 			} catch (err) {
-				errorMessage = `Error al borrar todos los recursos: ${err.message}`;
-				console.error(errorMessage);
+				errorMessage = `Error al borrar todo: Ocurrió un problema de conexión al intentar eliminar todos los registros. Inténtalo de nuevo más tarde.`;
+				console.error('Delete All error:', err);
 			} finally {
-				isLoading = false;
+				// Solo poner isLoading a false si no hubo mensaje de éxito.
+				if (!successMessage) {
+					isLoading = false;
+				}
 			}
 		}
 	}
 
+	// Navega a la página de edición
 	function handleEdit(place, year) {
-		// Navegar a la página de edición (asumiendo que existe)
+		// Limpiar mensajes antes de navegar
+		successMessage = null;
+		errorMessage = null;
+		apiError = null;
 		goto(`/ALM/edit/${encodeURIComponent(place)}/${year}`);
 	}
 
 	// --- Funciones de Búsqueda ---
 	function handleSearch() {
+		// Limpiar mensajes al iniciar una nueva búsqueda
 		errorMessage = null;
 		successMessage = null;
+		apiError = null;
 
 		const params = new URLSearchParams();
 
@@ -227,7 +294,7 @@
 
 		const queryString = params.toString() ? `?${params.toString()}` : '';
 		console.log(`Buscando con query: ${queryString}`);
-		fetchResources(queryString);
+		fetchResources(queryString); // No preservar mensajes en búsqueda manual
 	}
 
 	function clearSearch() {
@@ -242,14 +309,24 @@
 			requestOver: null,
 			requestUnder: null
 		};
-		errorMessage = null; // Limpiar mensajes
+		// Limpiar mensajes al limpiar búsqueda
+		errorMessage = null;
 		successMessage = null;
+		apiError = null;
 		fetchResources(); // Cargar todos los recursos
 	}
 
 	// Cargar los recursos iniciales cuando el componente se monta
 	onMount(() => fetchResources());
 </script>
+
+<svelte:head>
+	<title>Solicitudes de Dependencia por Autonomía</title>
+	<meta
+		name="description"
+		content="Gestión de datos sobre solicitudes de dependencia por Comunidad Autónoma y año."
+	/>
+</svelte:head>
 
 <main class="container mx-auto p-4">
 	<h1 class="mb-4 text-2xl font-bold">Solicitudes de Dependencia por Autonomía</h1>
@@ -261,6 +338,11 @@
 			role="alert"
 		>
 			<span class="block sm:inline">{successMessage}</span>
+			<button
+				on:click={() => (successMessage = null)}
+				class="absolute top-0 right-0 bottom-0 px-4 py-3"
+				aria-label="Cerrar">&times;</button
+			>
 		</div>
 	{/if}
 	{#if errorMessage}
@@ -270,6 +352,11 @@
 		>
 			<strong class="font-bold">Error:</strong>
 			<span class="block sm:inline">{errorMessage}</span>
+			<button
+				on:click={() => (errorMessage = null)}
+				class="absolute top-0 right-0 bottom-0 px-4 py-3"
+				aria-label="Cerrar">&times;</button
+			>
 		</div>
 	{/if}
 	{#if apiError}
@@ -279,6 +366,11 @@
 		>
 			<strong class="font-bold">Aviso:</strong>
 			<span class="block sm:inline">{apiError}</span>
+			<button
+				on:click={() => (apiError = null)}
+				class="absolute top-0 right-0 bottom-0 px-4 py-3"
+				aria-label="Cerrar">&times;</button
+			>
 		</div>
 	{/if}
 
@@ -295,6 +387,7 @@
 					bind:value={newResource.place}
 					required
 					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+					disabled={isLoading}
 				/>
 			</div>
 			<div>
@@ -306,6 +399,7 @@
 					required
 					placeholder="YYYY"
 					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+					disabled={isLoading}
 				/>
 			</div>
 			<div>
@@ -316,6 +410,7 @@
 					bind:value={newResource.population}
 					required
 					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+					disabled={isLoading}
 				/>
 			</div>
 			<div>
@@ -328,6 +423,7 @@
 					bind:value={newResource.dependent_population}
 					required
 					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+					disabled={isLoading}
 				/>
 			</div>
 			<div>
@@ -338,6 +434,7 @@
 					bind:value={newResource.request}
 					required
 					class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+					disabled={isLoading}
 				/>
 			</div>
 			<div class="flex items-end justify-end md:col-span-3">
@@ -346,7 +443,27 @@
 					class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
 					disabled={isLoading}
 				>
-					{#if isLoading}
+					{#if isLoading && !successMessage && !errorMessage && !apiError}
+						<svg
+							class="mr-2 -ml-1 inline h-4 w-4 animate-spin text-white"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+						>
+							<circle
+								class="opacity-25"
+								cx="12"
+								cy="12"
+								r="10"
+								stroke="currentColor"
+								stroke-width="4"
+							></circle>
+							<path
+								class="opacity-75"
+								fill="currentColor"
+								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+							></path>
+						</svg>
 						Creando...
 					{:else}
 						Crear Recurso
@@ -371,6 +488,7 @@
 					bind:value={searchFilters.place}
 					class="input-style mt-1 block w-full"
 					placeholder="Ej: Andalucía"
+					disabled={isLoading}
 				/>
 			</div>
 			<!-- Filtro Year -->
@@ -383,6 +501,7 @@
 					bind:value={searchFilters.year}
 					class="input-style mt-1 block w-full"
 					placeholder="Ej: 2024"
+					disabled={isLoading}
 				/>
 			</div>
 			<!-- Filtro Population -->
@@ -394,12 +513,14 @@
 						bind:value={searchFilters.populationOver}
 						class="input-style block w-full"
 						placeholder="Mín."
+						disabled={isLoading}
 					/>
 					<input
 						type="number"
 						bind:value={searchFilters.populationUnder}
 						class="input-style block w-full"
 						placeholder="Máx."
+						disabled={isLoading}
 					/>
 				</div>
 			</div>
@@ -412,12 +533,14 @@
 						bind:value={searchFilters.dependentPopulationOver}
 						class="input-style block w-full"
 						placeholder="Mín."
+						disabled={isLoading}
 					/>
 					<input
 						type="number"
 						bind:value={searchFilters.dependentPopulationUnder}
 						class="input-style block w-full"
 						placeholder="Máx."
+						disabled={isLoading}
 					/>
 				</div>
 			</div>
@@ -430,12 +553,14 @@
 						bind:value={searchFilters.requestOver}
 						class="input-style block w-full"
 						placeholder="Mín."
+						disabled={isLoading}
 					/>
 					<input
 						type="number"
 						bind:value={searchFilters.requestUnder}
 						class="input-style block w-full"
 						placeholder="Máx."
+						disabled={isLoading}
 					/>
 				</div>
 			</div>
@@ -471,7 +596,23 @@
 	</div>
 
 	{#if isLoading && !apiError && !errorMessage && !successMessage}
-		<p class="my-4 text-center">Cargando recursos...</p>
+		<div class="my-8 flex items-center justify-center text-center text-lg text-gray-600">
+			<svg
+				class="mr-3 h-6 w-6 animate-spin text-blue-500"
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+			>
+				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+				></circle>
+				<path
+					class="opacity-75"
+					fill="currentColor"
+					d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+				></path>
+			</svg>
+			Cargando recursos...
+		</div>
 	{/if}
 
 	<!-- Tabla de Recursos -->
@@ -541,8 +682,9 @@
 				{:else}
 					<tr>
 						<td colspan="6" class="py-4 px-4 text-center text-gray-500">
-							{#if !isLoading}
-								No hay recursos para mostrar.
+							{#if !isLoading && !apiError && !successMessage && !errorMessage}
+								<!-- Mostrar solo si no está cargando y no hay otros mensajes -->
+								No hay registros para mostrar. Puede añadir nuevos o buscar con otros criterios.
 							{/if}
 						</td>
 					</tr>
@@ -554,4 +696,26 @@
 
 <style>
 	/* Estilos reutilizados para inputs */
+	.input-style {
+		border-radius: 0.375rem; /* rounded-md */
+		border: 1px solid #d1d5db; /* border-gray-300 */
+		padding: 0.5rem 0.75rem; /* px-3 py-2 */
+		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+		font-size: 0.875rem; /* text-sm */
+	}
+	.input-style:focus {
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+		border-color: #6366f1; /* focus:border-indigo-500 */
+		box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* focus:ring-indigo-500 focus:ring-opacity-50 */
+	}
+	/* Estilos para estado deshabilitado */
+	input:disabled,
+	button:disabled {
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
+	input:disabled {
+		background-color: #f3f4f6; /* bg-gray-100 */
+	}
 </style>
