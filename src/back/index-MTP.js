@@ -4,22 +4,22 @@ const RESOURCE_MTP = "management-evolutions";
 function loadBackend_MTP(app, db){
 
     //Redirect a la documentación
-    /*
-    app.get(BASE_API+`/${RESOURCE_MTP}`, (request, response) => {
+    
+    app.get(BASE_API+`/${RESOURCE_MTP}/docs`, (request, response) => {
         return response.redirect("https://documenter.getpostman.com/view/42116317/2sAYkLnxYU");
 
     }); 
-    */
+    
 
 // Operaciones con colecciones de datos
 //LoadInitialData
     app.get(BASE_API+`/${RESOURCE_MTP}/loadInitialData`, (request, response) => {
-        console.log(`New GET to /%{RESOURCE_MTP}/loadInitialData`);
+        console.log(`New GET to /${RESOURCE_MTP}/loadInitialData`);
 
         // Primer paso, comprobar si hay datos previos.
         db.find({}, (err, existingData) =>{
             if(err){
-                console.error('Error: ', err);
+                console.log(`Error: ${err}`);
                 return response.status(500).send("Internal server error");
             }
 
@@ -46,7 +46,7 @@ function loadBackend_MTP(app, db){
         //Insert de estos datos inciales
         db.insert(initialData, (err, newData) => {
             if (err){
-                console.log('Error: ',err);
+                console.log(`Error: ${err}`);
                 return response.status(500).send('Internal server error');
             }
             console.log('Initial data loaded sucessfully');
@@ -58,7 +58,7 @@ function loadBackend_MTP(app, db){
     app.get(BASE_API+`/${RESOURCE_MTP}`, (request, response) => {
         console.log(`New GET to /${RESOURCE_MTP}`, request.query);
 
-        const{ year, place, ageOver, ageUnder, legal_residenceOver, legal_residenceUnder, economical_resourceOver, economical_resourceUnder, incompatible_benefitOver, incompatible_benefitUnder } = request.query;
+        const{ year, place, ageOver, ageUnder, legal_residenceOver, legal_residenceUnder, economical_resourceOver, economical_resourceUnder, incompatible_benefitOver, incompatible_benefitUnder, limit, offset } = request.query;
 
         //Construir el query para NEDB
         const query = {}; //Este es el objeto que NEDB usará para los filtros de las búsquedas
@@ -102,7 +102,7 @@ function loadBackend_MTP(app, db){
             .limit(limitNum)
             .exec((err, applications) => {
                 if(err){
-                    console.error('Error', err);
+                    console.log(`Error: ${err}`);
                     return response.status(500).send('Internal Error');
                 }
 
@@ -110,7 +110,7 @@ function loadBackend_MTP(app, db){
                 if(!(applications || applications.length === 0)){
                     db.count({}, (err,count) => {
                         if(err){
-                            console.error('Error', err);
+                            console.log(`Error: ${err}`);
                             return response.status(500).send('Internal error');
                         }
                         if (count === 0){
@@ -144,7 +144,7 @@ function loadBackend_MTP(app, db){
         //Verifico campos duplicados
         db.findOne({place : newApplication.place, year : newApplication.year}, (err, existingData) =>{
             if(err){
-                console.error('Error', err);
+                console.log(`Error: ${err}`);
                 return response.status(500).send('Internal error');
             }
 
@@ -155,7 +155,7 @@ function loadBackend_MTP(app, db){
             //Añadimos el recurso 
             db.insert(newApplication, (err, newData) =>{
                 if(err){
-                    console.error('Error', err);
+                    console.log(`Error: ${err}`);
                     return response.status(500).send('Internal error');
                 }
                 console.log('New data sucessfully added');
@@ -170,7 +170,7 @@ function loadBackend_MTP(app, db){
 
         db.remove({}, {multi : true}, (err, numDataRemoved) =>{
             if(err){
-                console.error('Error', err);
+                console.log(`Error: ${err}`);
                 return response.status(500).send('Internal error');
             }
             //Compruebo si no se ha eliminado nada, en ese caso vuelvo a lanzar error
@@ -199,7 +199,7 @@ function loadBackend_MTP(app, db){
 
         db.find({place : placeName}, (err, resources) => {
             if(err){
-                console.error('Error', err);
+                console.log(`Error: ${err}`);
                 return response.status(500).send('Internal error');
             }
 
@@ -243,7 +243,7 @@ function loadBackend_MTP(app, db){
             {multi: true},
             (err, numReplaced) => {
                 if(err){
-                    console.error('Error', err);
+                    console.log(`Error: ${err}`);
                     return response.status(500).send('Internal error');
                 }
                 if(numReplaced === 0){
@@ -262,7 +262,7 @@ function loadBackend_MTP(app, db){
         //Elimino todos los recursos que tengan ese place en común
         db.remove({place: placeName}, {multi: true}, (err, numRemoved) => {
             if(err){
-                console.error('Error', err);
+                console.log(`Error: ${err}`);
                 return response.status(500).send('Internal error');
             }
             //Si no se ha eliminado nada devuelvo error informando de que no se ha encontrado el recurso
@@ -314,7 +314,7 @@ function loadBackend_MTP(app, db){
             .limit(limit)
             .exec((err, resources) => {
                 if(err){
-                    console.error('Error', err);
+                    console.log(`Error: ${err}`);
                     return response.status(500).send('Internal error');
                 }
                 
