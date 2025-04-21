@@ -48,7 +48,7 @@ app.get('/', (request, response) => {
 );
 
 app.get('/api/v1/social-pension-payrolls/docs', (request, response) => {
-    response.redirect('https://documenter.getpostman.com/view/42128153/2sB2cUCP7v');
+    return response.redirect('https://documenter.getpostman.com/view/42128153/2sB2cUCP7v');
 });
 
 app.get(BASE_API + `/${RESOURCE_ALM}/docs`, (request, response) => {
@@ -66,5 +66,6 @@ loadBackend_EBT(app, db_EBT);
 loadBackend_MTP(app, db_MTP);
 
 // Iniciar el servidor
+
 
 export{loadBackend_EBT, loadBackend_ALM, loadBackend_MTP, db_ALM, db_EBT, db_MTP};

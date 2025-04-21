@@ -32,9 +32,9 @@
     <section class="api-section">
         <h2><i class="fas fa-cogs"></i> APIs</h2>
         <ul>
-            <li><a href="https://sos2425-11.onrender.com/api/v1/autonomy-dependence-applications/docs" target="_blank" rel="noopener noreferrer">Autonomy Dependence Applications API</a> (Antonio Manuel Luque Molina)</li>
-            <li><a href="https://sos2425-11.onrender.com/api/v1/social-pension-payrolls/docs" target="_blank" rel="noopener noreferrer">Social Pension Payrolls API</a> (Eduardo Becerra Tomé)</li>
-            <li><a href="https://sos2425-11.onrender.com/api/v1/management-evolutions/docs" target="_blank" rel="noopener noreferrer">Management Evolutions API</a> (Mario Tur Pantión)</li>
+            <li><a href="/api/v1/autonomy-dependence-applications/docs" target="_blank" rel="noopener noreferrer">Autonomy Dependence Applications API</a> (Antonio Manuel Luque Molina)</li>
+            <li><a href="/api/v1/social-pension-payrolls/docs" target="_blank" rel="noopener noreferrer">Social Pension Payrolls API</a> (Eduardo Becerra Tomé)</li>
+            <li><a href="/api/v1/management-evolutions/docs" target="_blank" rel="noopener noreferrer">Management Evolutions API</a> (Mario Tur Pantión)</li>
         </ul>
     </section>
 

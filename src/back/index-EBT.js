@@ -6,6 +6,13 @@ import dataEBT from './data-EBT.js';
 function loadBackend_EBT(app, db) {
 
 
+    app.get('/api/v1/social-pension-payrolls/docs', (request, response) => {
+        return response.redirect('https://documenter.getpostman.com/view/42128153/2sB2cUCP7v');
+    });
+    
+
+
+
     // GET: Obtiene datos del recurso
     app.get(BASE_API + `/${RESOURCE_EBT}`, (request, response) => {
         console.log(`New GET to /${RESOURCE_EBT}`, request.query);
