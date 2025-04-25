@@ -72,24 +72,24 @@ function loadBackend_MTP(app, db){
         if(place) query.place = place;
 
         if(ageOver || ageUnder) {
-            query.request.age = {};
-            if(ageOver) query.request.age.$gte = parseInt(ageOver);
-            if(ageUnder) query.request.age.$lte = parseInt(ageUnder);
+            query.age = {};
+            if(ageOver) query.age.$gte = parseInt(ageOver);
+            if(ageUnder) query.age.$lte = parseInt(ageUnder);
         }
         if(legal_residenceOver || legal_residenceUnder) {
-            query.request.legal_residence = {};
-            if(legal_residenceOver) query.request.legal_residence.$gte = parseInt(legal_residenceOver);
-            if(legal_residenceUnder) query.request.legal_residence.$lte = parseInt(legal_residenceUnder);
+            query.legal_residence = {};
+            if(legal_residenceOver) query.legal_residence.$gte = parseInt(legal_residenceOver);
+            if(legal_residenceUnder) query.legal_residence.$lte = parseInt(legal_residenceUnder);
         }
         if(economical_resourceOver || economical_resourceUnder) {
-            query.request.economical_resource = {};
-            if(economical_resourceOver) query.request.economical_resource.$gte = parseInt(economical_resourceOver);
-            if(economical_resourceUnder) query.request.economical_resource.$lte = parseInt(economical_resourceUnder);
+            query.economical_resource = {};
+            if(economical_resourceOver) query.economical_resource.$gte = parseInt(economical_resourceOver);
+            if(economical_resourceUnder) query.economical_resource.$lte = parseInt(economical_resourceUnder);
         }
         if(incompatible_benefitOver || incompatible_benefitUnder) {
-            query.request.incompatible_benefit = {};
-            if(incompatible_benefitOver) query.request.incompatible_benefit.$gte = parseInt(incompatible_benefitOver);
-            if(incompatible_benefitUnder) query.request.incompatible_benefit.$lte = parseInt(incompatible_benefitUnder);
+            query.incompatible_benefit = {};
+            if(incompatible_benefitOver) query.incompatible_benefit.$gte = parseInt(incompatible_benefitOver);
+            if(incompatible_benefitUnder) query.incompatible_benefit.$lte = parseInt(incompatible_benefitUnder);
         }
 
         //Paginación
@@ -192,7 +192,7 @@ function loadBackend_MTP(app, db){
 
 //Operaciones con un solo recurso
 //Get
-    app.get(BASE_API+`/${RESOURCE_MTP}`, (request, response) => {
+    app.get(BASE_API+`/${RESOURCE_MTP}/:place`, (request, response) => {
         //Lo dejo para que se pueda hacer según la ciudad, no sé si tengo que hacerlo para todos los campos
         const placeName = request.params.place;
         console.log(`New GET to /${RESOURCE_MTP}/${placeName}`);
@@ -212,7 +212,7 @@ function loadBackend_MTP(app, db){
                 delete resources[0]._id;
                 response.status(200).send(resources[0]);
             }else{ // Si hay más de uno devuelvo el array
-                response.status(200).send(resources.map(r => { ReadableStreamDefaultReader._id; return r}));
+                response.status(200).send(resources.map(r => { delete r._id; return r }));
             }
         })
     })
@@ -288,7 +288,7 @@ function loadBackend_MTP(app, db){
         const placeName = request.params.place;
         const yearNumber = request.params.year;
         const limit = parseInt(request.query.limit) || 0;
-        const offset = parseInt(request.query.offSetNum) || 0;
+        const offset = parseInt(request.query.offset) || 0;
         console.log(`New GET to /${RESOURCE_MTP}/${placeName}/${yearNumber}?limit=${limit}&offset=${offset}`);
         //Valido que se proporcionen los dos parámetros
         if(!placeName || !yearNumber){
