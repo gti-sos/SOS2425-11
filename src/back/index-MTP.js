@@ -1,12 +1,12 @@
 const BASE_API = "/api/v1/management-evolutions";
-const RESOURCE_MTP = "management-evolutions";
+//const RESOURCE_MTP = "management-evolutions";
 
 function loadBackend_MTP(app, db) {
 
     //Redirect a la documentación
 
     app.get(BASE_API + "/docs", (request, response) => {
-        return response.redirect("https://documenter.getpostman.com/view/42116317/2sAYkLnxYU");
+        return response.redirect("https://documenter.getpostman.com/view/42342450/2sB2izEDqp");
 
     });
 
