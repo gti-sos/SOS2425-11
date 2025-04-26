@@ -1,0 +1,892 @@
+{
+	"info": {
+		"_postman_id": "1a292447-7e34-4bfe-bb9f-333fb703a493",
+		"name": "Pruebas API RESOURCE_MTP NeDB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42342450"
+	},
+	"item": [
+		{
+			"name": "LoadInitialData",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code 200 or 201",
+							"pm.test(\"Status code is  201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/loadInitialData",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"loadInitialData"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `201 OK` status."
+			},
+			"response": []
+		},
+		{
+			"name": "Get list of resources",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code 200 or 201",
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							"// Test for specific header presence",
+							"pm.test(\"Response header 'Content-Type' is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"// Test for specific header value based on status code",
+							"if (pm.response.code === 201) {",
+							"    pm.test(\"Response header 'Content-Type' has value 'text/html'\", function () {",
+							"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+							"    });",
+							"} else if (pm.response.code === 200) {",
+							"    pm.test(\"Response header 'Content-Type' has value 'application/json'\", function () {",
+							"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"    });",
+							"}",
+							"",
+							"// Test for body based on the status",
+							"if (pm.response.code === 201) {",
+							"    pm.test(\"Response body contains 'Initial data loaded successfully'\", function () {",
+							"        pm.expect(pm.response.text()).to.include(\"Initial data loaded successfully\");",
+							"    });",
+							"} else if (pm.response.code === 200) {",
+							"    pm.test('Response body is an array of length 10', function () {",
+							"    pm.expect(pm.response.json()).to.be.an('array').that.has.lengthOf(10);",
+							"    });",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "Get list of resources w Search & pagination",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code 200 or 201",
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							"// Test for specific header presence",
+							"pm.test(\"Response header 'Content-Type' is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"// Test for specific header value based on status code",
+							"if (pm.response.code === 201) {",
+							"    pm.test(\"Response header 'Content-Type' has value 'text/html'\", function () {",
+							"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+							"    });",
+							"} else if (pm.response.code === 200) {",
+							"    pm.test(\"Response header 'Content-Type' has value 'application/json'\", function () {",
+							"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"    });",
+							"}",
+							"",
+							"// Test for body based on the status",
+							"if (pm.response.code === 201) {",
+							"    pm.test(\"Response body contains 'Initial data loaded successfully'\", function () {",
+							"        pm.expect(pm.response.text()).to.include(\"Initial data loaded successfully\");",
+							"    });",
+							"} else if (pm.response.code === 200) {",
+							"    pm.test('Response body is an array of length 2', function () {",
+							"    pm.expect(pm.response.json()).to.be.an('array').that.has.lengthOf(2);",
+							"    });",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}?age=1000&year=2024&limit=2&offset=2",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"query": [
+						{
+							"key": "age",
+							"value": "1000"
+						},
+						{
+							"key": "year",
+							"value": "2024"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						},
+						{
+							"key": "offset",
+							"value": "2"
+						}
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "Post to list of resources",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for response code",
+							"pm.test(\"Response code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"// Test for response body",
+							"pm.test(\"Response body contains success message\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"New data sucessfully added\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"year\": 2025,\n    \"place\": \"Madrid\",\n    \"age\": 1043,\n    \"legal_residence\": 1634,\n    \"economical_resource\": 6836,\n    \"incompatible_benefit\": 51\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Post with existing resource to list of resources",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response code is 409\", function () {",
+							"    pm.response.to.have.status(409);",
+							"});",
+							"",
+							"pm.test(\"Response body contains 'Resource already exists'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Data already exists\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"year\": 2025,\n    \"place\": \"Madrid\",\n    \"age\": 1043,\n    \"legal_residence\": 1634,\n    \"economical_resource\": 6836,\n    \"incompatible_benefit\": 51\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Post with Wrong Body to list of resources Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"// Test for response body content",
+							"pm.test(\"Response body contains 'Missing required fields'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Missing required fields\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"year\": 2025,\n    \"place\": \"Madrid\",\n    \"age\": 1043,\n    \"legal_residence\": 1634,\n    \"economical_resource\": 6836\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Put to list of resources",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for the response code to ensure it's a valid PUT request",
+							"pm.test(\"Status code is 405\", function () {",
+							"    pm.response.to.have.status(405);",
+							"});",
+							"",
+							"// Test for the response body to ensure it contains the correct error message",
+							"pm.test(\"Response body contains error message\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Method not allowed\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// 405 Method Not Allowed, (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS):\n{\n    \"year\": 2025,\n    \"place\": \"Madrid\",\n    \"age\": 1043,\n    \"legal_residence\": 1634,\n    \"economical_resource\": 6836,\n    \"incompatible_benefit\": 51\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					]
+				},
+				"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Get specific resource (place)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Test for specific header presence\r",
+							"pm.test(\"Response header 'Content-Type' is present\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"});\r",
+							"\r",
+							"// Test for specific header value\r",
+							"pm.test(\"Response header 'Content-Type' has value 'application/json'\", function () {\r",
+							"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"    });\r",
+							"\r",
+							"// Test for body\r",
+							"pm.test('Response body is an object', function () {\r",
+							"    pm.expect(pm.response.json()).to.be.an('object');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Sevilla",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Sevilla"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post to Specific resource",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code\r",
+							"pm.test(\"Status code is 405\", function () {\r",
+							"    pm.response.to.have.status(405);\r",
+							"});\r",
+							"\r",
+							"// Test for response body\r",
+							"pm.test(\"Response body contains error message\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Method not allowed\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// Error 405 Method not allowed, no puedes hacer POST a un recurso específico\r\n{\r\n    \"year\": 2020,\r\n    \"age\": 6584,\r\n    \"legal_residence\": 524,\r\n    \"economical_resource\": 9822,\r\n    \"incompatible_benefit\": 35\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Andalucía",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Andalucía"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put to specific resource",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Test for response body content\r",
+							"pm.test(\"Response body has updated message\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Update 1 resources sucessfully\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"year\": 2024,\r\n    \"place\": \"Sevilla\",\r\n    \"age\": 65847,\r\n    \"legal_residence\": 621,\r\n    \"economical_resource\": 9822,\r\n    \"incompatible_benefit\": 35\r\n}\r\n\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Sevilla",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Sevilla"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put to specific resource with different id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains error message\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Bad request, parameter does not match Url´s\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "//Error porque el place pasado como parámetro no coincide con del Body. 400 Bad Request\r\n{\r\n    \"year\": 2025,\r\n    \"place\": \"Madrid\",\r\n    \"age\": 1043,\r\n    \"legal_residence\": 1634,\r\n    \"economical_resource\": 6836,\r\n    \"incompatible_benefit\": 51\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Aragón",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Aragón"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put to non existing specific resource",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code\r",
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"// Test for response body\r",
+							"pm.test(\"Response body contains 'Resource not found'\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Resource not found\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "//Error porque no hay ninguna entrada en la base de datos con ese Place, 404 not found.\r\n{\r\n    \"year\": 2025,\r\n    \"place\": \"Guadalajara\",\r\n    \"age\": 1043,\r\n    \"legal_residence\": 1634,\r\n    \"economical_resource\": 6836,\r\n    \"incompatible_benefit\": 51\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Guadalajara",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Guadalajara"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get relation (place & year)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Test for specific header presence\r",
+							"pm.test(\"Response header 'Content-Type' is present\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"});\r",
+							"\r",
+							"// Test for specific header value\r",
+							"pm.test(\"Response header 'Content-Type' has value 'application/json'\", function () {\r",
+							"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"    });\r",
+							"\r",
+							"// Test for body\r",
+							"pm.test('Response body is an object', function () {\r",
+							"    pm.expect(pm.response.json()).to.be.an('object');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Sevilla/2024",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Sevilla",
+						"2024"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post to relation (place & year)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 405\", function () {\r",
+							"    pm.response.to.have.status(405);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains error message\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Method not allowed\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "//Error 405 Method not allowed, no puedes hacer un post a un recurso específico\r\n{\r\n  \"year\": 2024,\r\n  \"place\": \"Andalucía\",\r\n  \"population\": 9000000,\r\n  \"dependent_population\": 1200000,\r\n  \"request\": 450000\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Andalucía/2024",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Andalucía",
+						"2024"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put to relation (place & year)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for the status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Test for response body content\r",
+							"pm.test(\"Response body contains success message\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Resource updated successfully\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"year\": 2024,\r\n    \"age\": 1043,\r\n    \"legal_residence\": 1634,\r\n    \"economical_resource\": 6836,\r\n    \"incompatible_benefit\": 51\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Sevilla/2024",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Sevilla",
+						"2024"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete specific resource",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"// Test for the absence of response body\r",
+							"pm.test(\"Response body is empty\", function () {\r",
+							"    pm.expect(pm.response.text()).to.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Sevilla",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Sevilla"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete specific relation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"// Test for the absence of response body\r",
+							"pm.test(\"Response body is empty\", function () {\r",
+							"    pm.expect(pm.response.text()).to.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Cadiz/2024",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					],
+					"path": [
+						"Cadiz",
+						"2024"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete list of resources",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test for status code",
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"// Test for the absence of response body",
+							"pm.test(\"Response body is empty\", function () {",
+							"    pm.expect(pm.response.text()).to.be.empty;",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}",
+					"host": [
+						"{{BASE_URL}}{{RESOURCE_MTP}}"
+					]
+				},
+				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}
