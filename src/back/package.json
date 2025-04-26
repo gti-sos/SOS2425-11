@@ -6,11 +6,11 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
-        "test-api-local": "npm run test-social-pension-payrolls && npm run test-autonomy-dependence-applications",
+        "test-api-local": "npm run test-social-pension-payrolls && npm run test-autonomy-dependence-applications && npm run test-management-evolutions",
         "test-api-online": "npx newman run tests/back/api-tests-ALM.json -e tests/back/api-env-online.json && npx newman run tests/back/api-tests-EBT.json -e tests/back/api-env-online.json",
         "test-autonomy-dependence-applications": "npx newman run ../../tests/back/api-tests-ALM.json -e ../../tests/back/api-env-local.json",
         "test-social-pension-payrolls": "npx newman run ../../tests/back/api-tests-EBT.json -e ../../tests/back/api-env-local.json",
-        "test-social-management-evolutions": "npx newman run ../../tests/back/api-tests-MTP.json -e ../../tests/back/api-env-local.json"
+        "test-management-evolutions": "npx newman run ../../tests/back/api-tests-MTP.json -e ../../tests/back/api-env-local.json"
     },
     "dependencies": {
         "@seald-io/nedb": "^4.1.1",
