@@ -1,5 +1,5 @@
 const BASE_API = "/api/v1/management-evolutions";
-
+const RESOURCE_MTP = "management-evolutions";
 
 function loadBackend_MTP(app, db) {
 
