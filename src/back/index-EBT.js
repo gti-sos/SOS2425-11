@@ -19,8 +19,8 @@ function loadBackend_EBT(app, db) {
 
         const { year,
             place,
-            from, // Añadido
-            to,   // Añadido
+            from,
+            to,
             retirement_amountOver,
             retirement_amountUnder,
             disability_amountOver,
@@ -54,7 +54,6 @@ function loadBackend_EBT(app, db) {
             return response.status(400).json({ error: "'from' year cannot be greater than 'to' year." });
         }
 
-        // Priorizar from/to sobre year si ambos están presentes
         if (from || to) {
             query.year = {};
             if (from) query.year.$gte = fromYear;
@@ -64,7 +63,6 @@ function loadBackend_EBT(app, db) {
         }
 
 
-        // Resto de filtros numéricos
         if (retirement_amountOver || retirement_amountUnder) {
             query.retirement_amount = {};
             if (retirement_amountOver) query.retirement_amount.$gte = parseFloat(retirement_amountOver);
@@ -98,9 +96,8 @@ function loadBackend_EBT(app, db) {
                 console.error(`Error: ${err}`)
                 return response.status(500).send("Internal Error")
             }
-            // Comprobar si la base de datos está vacía solo si no hay filtros específicos
              if (!contacts || contacts.length === 0) {
-                // Solo redirigir a loadInitialData si no se aplicaron filtros y la BD está vacía
+
                 if (Object.keys(query).length === 0) {
                      db.count({}, (err, count) => {
                         if (err) {
@@ -109,24 +106,17 @@ function loadBackend_EBT(app, db) {
                         }
                         if (count === 0) {
                             console.log("Database empty, redirecting to load initial data.");
-                            // Asegúrate de que la redirección sea manejada correctamente por el cliente
-                            // o considera cargar los datos aquí directamente si la redirección no es ideal.
-                            // Por simplicidad, mantenemos la redirección, pero ten en cuenta sus implicaciones.
                              return response.redirect(BASE_API + `/${RESOURCE_EBT}/loadInitialData`);
                         } else {
-                             // Hay datos en la BD, pero ninguno coincide con la consulta (que estaba vacía)
-                             // Esto no debería ocurrir lógicamente si count > 0, pero por si acaso:
                              console.log("No data found matching the empty query, though DB is not empty.");
                              return response.status(404).send("No data matches the query");
                         }
                     });
                 } else {
-                     // Se aplicaron filtros, pero no hubo coincidencias
                      console.log("No data found with the query:", query);
                      return response.status(404).send("No data matches the query");
                 }
             } else {
-                // Se encontraron datos que coinciden con la consulta
                 response.status(200).json(contacts.map(r => { delete r._id; return r; }));
             }
         })
@@ -135,7 +125,6 @@ function loadBackend_EBT(app, db) {
 
     });
 
-    // GET: Carga 10 datos iniciales en el array de NodeJS si está vacío
     app.get(BASE_API + `/${RESOURCE_EBT}/loadInitialData`, (request, response) => {
         console.log(`New GET to /${RESOURCE_EBT}/loadInitialData`);
 
@@ -173,7 +162,7 @@ function loadBackend_EBT(app, db) {
 
 
 
-    // POST: Agregar un nuevo dato
+
     app.post(BASE_API + `/${RESOURCE_EBT}`, (request, response) => {
         console.log(`New POST to /${RESOURCE_EBT}`);
 
@@ -229,7 +218,7 @@ function loadBackend_EBT(app, db) {
         return response.status(405).send(`Not allowed to PUT in a resource list`)
     });
 
-    // GESTIÓN DE UN RECURSO (place)
+
 
     // GET: Obtiene datos del recurso place
     app.get(BASE_API + `/${RESOURCE_EBT}/:place`, (request, response) => {
