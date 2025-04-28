@@ -246,7 +246,7 @@
 
                 <div class="mt-8 flex items-center justify-end gap-x-4 border-t border-gray-900/10 pt-6">
                     <a
-                        href="/EBT"
+                        href="/MTP"
                         class="rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 transition duration-150 ease-in-out hover:bg-gray-300"
                         >Cancelar</a
                     >

@@ -385,7 +385,7 @@ function loadBackend_MTP(app, db) {
             }
 
             // Valido campos requeridos
-            const requiredFields = ['year', 'age', 'legal_residence', 'economical_resource', 'incompatible_benefit'];
+            const requiredFields = ['age', 'legal_residence', 'economical_resource', 'incompatible_benefit'];
             const missingFields = requiredFields.filter(field => !(field in newData));
             if (missingFields.length > 0) {
                 return response.status(400).send(`Bad Request. Missing required fields: ${missingFields.join(', ')}`);
