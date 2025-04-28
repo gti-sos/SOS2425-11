@@ -3,6 +3,7 @@
         { name: "Inicio", link: "/" },
         { name: "Front ALM", link: "/ALM" },
         { name: "Front EBT", link: "/EBT" },
+        { name: "Front MTP", link: "/MTP" },
         { name: "About", link: "/about" }
     ];
 </script>

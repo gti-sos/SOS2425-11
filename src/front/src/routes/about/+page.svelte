@@ -14,7 +14,7 @@
     <section class="team-section">
         <h2><i class="fas fa-users"></i> Team Members</h2>
         <ul>
-            <li>Eduardo Becerra Tomé (<a href="https://github.com/edubectom" target="_blank" rel="noopener noreferrer">@edubectom</a>)</li>
+            <li>Eduardo Becerra Tomé (<a href="https://github.com/EduardoBecTom" target="_blank" rel="noopener noreferrer">@edubectom</a>)</li>
             <li>Mario Tur Pantión (<a href="https://github.com/mariotuur" target="_blank" rel="noopener noreferrer">@mariotuur</a>)</li>
             <li>Antonio Manuel Luque Molina (<a href="https://github.com/antluqmol1" target="_blank" rel="noopener noreferrer">@antluqmol1</a>)</li>
         </ul>
