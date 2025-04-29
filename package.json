@@ -23,7 +23,8 @@
     "test:back": "npm run test-api-local    --workspace=src/back",
     "test:all": "npm-run-all --parallel test:back",
     "start": "node index.js",
-    "clean": "npm run clean:back && npm run clean:front"
+    "clean": "npm run clean:back && npm run clean:front",
+    "test-backend": "npm run start-and-test"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",

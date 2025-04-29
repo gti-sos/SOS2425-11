@@ -25,7 +25,7 @@
 				}
 			],
 			"request": {
-				"method": "GET",
+				"method": "GET", 
 				"header": [],
 				"url": {
 					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/loadInitialData",
@@ -337,7 +337,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "// 405 Method Not Allowed, (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS):\n{\n    \"year\": 2025,\n    \"place\": \"Madrid\",\n    \"age\": 1043,\n    \"legal_residence\": 1634,\n    \"economical_resource\": 6836,\n    \"incompatible_benefit\": 51\n}\n",
+					"raw": "\n{\n    \"year\": 2025,\n    \"place\": \"Madrid\",\n    \"age\": 1043,\n    \"legal_residence\": 1634,\n    \"economical_resource\": 6836,\n    \"incompatible_benefit\": 51\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -429,7 +429,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "// Error 405 Method not allowed, no puedes hacer POST a un recurso específico\r\n{\r\n    \"year\": 2020,\r\n    \"age\": 6584,\r\n    \"legal_residence\": 524,\r\n    \"economical_resource\": 9822,\r\n    \"incompatible_benefit\": 35\r\n}\r\n",
+					"raw": "\r\n{\r\n    \"year\": 2020,\r\n    \"age\": 6584,\r\n    \"legal_residence\": 524,\r\n    \"economical_resource\": 9822,\r\n    \"incompatible_benefit\": 35\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -531,7 +531,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "//Error porque el place pasado como parámetro no coincide con del Body. 400 Bad Request\r\n{\r\n    \"year\": 2025,\r\n    \"place\": \"Madrid\",\r\n    \"age\": 1043,\r\n    \"legal_residence\": 1634,\r\n    \"economical_resource\": 6836,\r\n    \"incompatible_benefit\": 51\r\n}\r\n\r\n",
+					"raw": "\r\n{\r\n    \"year\": 2025,\r\n    \"place\": \"Madrid\",\r\n    \"age\": 1043,\r\n    \"legal_residence\": 1634,\r\n    \"economical_resource\": 6836,\r\n    \"incompatible_benefit\": 51\r\n}\r\n\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -578,7 +578,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "//Error porque no hay ninguna entrada en la base de datos con ese Place, 404 not found.\r\n{\r\n    \"year\": 2025,\r\n    \"place\": \"Guadalajara\",\r\n    \"age\": 1043,\r\n    \"legal_residence\": 1634,\r\n    \"economical_resource\": 6836,\r\n    \"incompatible_benefit\": 51\r\n}\r\n",
+					"raw": "\r\n{\r\n    \"year\": 2025,\r\n    \"place\": \"Guadalajara\",\r\n    \"age\": 1043,\r\n    \"legal_residence\": 1634,\r\n    \"economical_resource\": 6836,\r\n    \"incompatible_benefit\": 51\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -671,7 +671,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "//Error 405 Method not allowed, no puedes hacer un post a un recurso específico\r\n{\r\n  \"year\": 2024,\r\n  \"place\": \"Andalucía\",\r\n  \"population\": 9000000,\r\n  \"dependent_population\": 1200000,\r\n  \"request\": 450000\r\n}\r\n",
+					"raw": "\r\n{\r\n  \"year\": 2024,\r\n  \"place\": \"Andalucía\",\r\n  \"population\": 9000000,\r\n  \"dependent_population\": 1200000,\r\n  \"request\": 450000\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"

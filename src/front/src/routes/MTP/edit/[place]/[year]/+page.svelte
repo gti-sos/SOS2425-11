@@ -84,7 +84,7 @@
                 successMessage = 'Recurso actualizado correctamente.';
                 // Esperar un poco para que el usuario vea el mensaje y volver a la lista
                 await new Promise((resolve) => setTimeout(resolve, 1500));
-                goto('/MTP'); // Volver a la página de la lista EBT
+                goto('/MTP'); // Volver a la página de la lista MTP
             } else if (response.status === 400) {
                 const errorBody = await response.text(); // Leer el cuerpo del error
                 errorMessage = `Error al actualizar: Datos inválidos o faltantes. ${errorBody}`;
