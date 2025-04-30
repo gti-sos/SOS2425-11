@@ -1,11 +1,11 @@
-const BASE_API = "/api/v1/management-evolutions";
+const BASE_API = "/api/v1";
 const RESOURCE_MTP = "management-evolutions";
 
 function loadBackend_MTP(app, db) {
 
     //Redirect a la documentación
 
-    app.get(BASE_API + "/docs", (request, response) => {
+    app.get(BASE_API + `/${RESOURCE_MTP}/docs`, (request, response) => {
         return response.redirect("https://documenter.getpostman.com/view/42342450/2sB2izEDqp");
 
     });
@@ -13,7 +13,7 @@ function loadBackend_MTP(app, db) {
 
     // Operaciones con colecciones de datos
     //LoadInitialData
-    app.get(BASE_API + "/loadInitialData", (request, response) => {
+    app.get(BASE_API + `/${RESOURCE_MTP}/loadInitialData`, (request, response) => {
         console.log(`New GET to /${RESOURCE_MTP}/loadInitialData`);
 
         // Primer paso, comprobar si hay datos previos.
@@ -56,7 +56,7 @@ function loadBackend_MTP(app, db) {
         //GET: Obtener un recurso según una búsqueda por algun campo || Paginacion?
 
         
-        app.get(BASE_API, (request, response) => {
+        app.get(BASE_API + `/${RESOURCE_MTP}`, (request, response) => {
             console.log(`New GET to /${RESOURCE_MTP}`, request.query);
 
             const { year, place, ageOver, ageUnder, legal_residenceOver, legal_residenceUnder, economical_resourceOver, economical_resourceUnder, incompatible_benefitOver, incompatible_benefitUnder, limit, offset } = request.query;
@@ -161,7 +161,7 @@ function loadBackend_MTP(app, db) {
         */
 
         // Post: Para agregar un nuevo recurso a la coleccion
-        app.post(BASE_API, (request, response) => {
+        app.post(BASE_API + `/${RESOURCE_MTP}`, (request, response) => {
             console.log(`New POST to /${RESOURCE_MTP}`);
             let newApplication = request.body;
             //Valido los campos requeridos
@@ -192,7 +192,7 @@ function loadBackend_MTP(app, db) {
         })
 
         //Delete - Borrar una lista de recursos 
-        app.delete(BASE_API, (request, response) => {
+        app.delete(BASE_API + `/${RESOURCE_MTP}`, (request, response) => {
             console.log(`New DELETE to /${RESOURCE_MTP}`);
 
             db.remove({}, { multi: true }, (err, numDataRemoved) => {
@@ -212,14 +212,14 @@ function loadBackend_MTP(app, db) {
         })
 
         //Put - Devuelve error porque no se puede hacer un put a una coleccion
-        app.put(BASE_API, (request, response) => {
+        app.put(BASE_API + `/${RESOURCE_MTP}`, (request, response) => {
             console.log(`New PUT to /${RESOURCE_MTP}`);
             return response.status(405).send('Method not allowed');
         })
 
         //Operaciones con un solo recurso
         //Get
-        app.get(BASE_API + "/:place", (request, response) => {
+        app.get(BASE_API + `/${RESOURCE_MTP}/:place`, (request, response) => {
             //Lo dejo para que se pueda hacer según la ciudad, no sé si tengo que hacerlo para todos los campos
             const placeName = request.params.place;
             console.log(`New GET to /${RESOURCE_MTP}/${placeName}`);
@@ -244,7 +244,7 @@ function loadBackend_MTP(app, db) {
             })
         })
         //Put
-        app.put(BASE_API+"/:place", (request, response) => {
+        app.put(BASE_API + `/${RESOURCE_MTP}/:place`, (request, response) => {
             const placeName = request.params.place;
             console.log(`New PUT to /${RESOURCE_MTP}/${placeName}`);
 
@@ -283,7 +283,7 @@ function loadBackend_MTP(app, db) {
             )
         })
         //Delete 
-        app.delete(BASE_API + "/:place", (request, response) => {
+        app.delete(BASE_API + `/${RESOURCE_MTP}/:place`, (request, response) => {
             const placeName = request.params.place;
             console.log(`New DELETE to /${RESOURCE_MTP}/${placeName}`);
             //Elimino todos los recursos que tengan ese place en común
@@ -304,14 +304,14 @@ function loadBackend_MTP(app, db) {
         })
 
         //Post
-        app.post(BASE_API + "/:place", (request, response) => {
+        app.post(BASE_API + `/${RESOURCE_MTP}/:place`, (request, response) => {
             console.log(`New POST to /${RESOURCE_MTP}/${request.params.place}`);
             return response.status(405).send("Method not allowed. Cannot POST to a specific resource.");
         });
 
         //Gestion de relaciones
         //Get
-        app.get(BASE_API + "/:place/:year", (request, response) => {
+        app.get(BASE_API + `/${RESOURCE_MTP}/:place/:year`, (request, response) => {
             const placeName = request.params.place;
             const yearNumber = request.params.year;
             const limit = parseInt(request.query.limit) || 0;
@@ -360,7 +360,7 @@ function loadBackend_MTP(app, db) {
         })
 
         //Put
-        app.put(BASE_API + "/:place/:year", (request, response) => {
+        app.put(BASE_API + `/${RESOURCE_MTP}/:place/:year`, (request, response) => {
             const placeName = request.params.place;
             const yearNumber = request.params.year;
             const newData = request.body;
@@ -413,7 +413,7 @@ function loadBackend_MTP(app, db) {
         })
 
         //DELETE
-        app.delete(BASE_API + "/:place/:year", (request, response) => {
+        app.delete(BASE_API + `/${RESOURCE_MTP}/:place/:year`, (request, response) => {
             const placeName = request.params.place;
             const yearNumber = request.params.year;
 
@@ -445,7 +445,7 @@ function loadBackend_MTP(app, db) {
         });
 
         //POST
-        app.post(BASE_API + "/:place/:year", (request, response) => {
+        app.post(BASE_API + `/${RESOURCE_MTP}/:place/:year`, (request, response) => {
             console.log(`New POST to /${RESOURCE_MTP}/${request.params.place}/${request.params.year}`);
             return response.status(405).send("Method not allowed. Cannot POST to a specific resource.");
         });
