@@ -36,7 +36,7 @@
 					<!-- Consider using a more specific icon if available -->
 					<span class="icon-small" style="font-size: 1.2em;">🤝</span> API ALM (Ayudas Dependencia)
 				</a>
-				<a href="/api/v1/management-evolutions/loadInitialData" class="api-button alm-button" style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #45daed; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+				<a href="/api/v1/management-evolutions" class="api-button alm-button" style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #45daed; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
 					<!-- Consider using a more specific icon if available -->
 					<span class="icon-small" style="font-size: 1.2em;">🫂</span> API MTP (Ayudas sociales) 
 				</a>
