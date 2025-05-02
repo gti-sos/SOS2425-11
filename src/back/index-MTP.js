@@ -110,31 +110,30 @@ function loadBackend_MTP(app, db) {
                 }
 
                 //Si no hay datos lleva al loadInitData
-                if (!(applications || applications.length === 0)) {
-                    db.count({}, (err, count) => {
-                        if (err) {
-                            console.log(`Error: ${err}`);
-                            return response.status(500).send('Internal error');
-                        }
-                        if (count === 0) {
-                            console.log('Database empty, loading initial data');
-                            return response.redirect(BASE_API + `/${RESOURCE_MTP}/loadInitialData`);
-                        } else {
-                            //En caso de que si haya datos pero no coincidan con el filtro devuelve error 404
-                            console.log('No resources found matching the specified filter');
-                            return response.status(404).send('No resources found matching the specified filter');
-                        }
-                    });
+                if (!applications || applications.length === 0) {
+                    if (Object.keys(query).length === 0) {
+                        db.count({}, (err, count) => {
+                            if (err) {
+                                console.log(`Error: ${err}`);
+                                return response.status(500).send('Internal error');
+                            }
+                            if (count === 0) {
+                                console.log('Database empty, loading initial data');
+                                return response.redirect(BASE_API + `/${RESOURCE_MTP}/loadInitialData`);
+                            } else {
+                                //En caso de que si haya datos pero no coincidan con el filtro devuelve error 404
+                                console.log('No resources found matching the specified filter');
+                                return response.status(404).send('No resources found matching the specified filter');
+                            }
+                        });
                 } else {
-                    //Si hay datos los envía
-                    if (applications.length === 1) {
-                        delete applications[0]._id; //Elimino el campo id pues es algo que crea NEDB automáticamente pero no debe verlo el usuario final.
-                        response.status(200).send(applications[0]);
-                    } else {
-                        response.status(200).send(applications.map(r => { delete r._id; return r }));
+                    console.log("No data found with the query:", query);
+                    return response.status(404).send("No data matches the query");
+                    } 
+                }else {
+                        return response.status(200).send(applications.map(r => { delete r._id; return r }));
                     }
-                }
-            });
+                })
     });
 
     /*

@@ -36,7 +36,7 @@
         incompatible_benefitUnder: null
     };
     // Datos de ejemplo actualizados con la estructura real
-    const exampleResources = [
+    /*const exampleResources = [
         {
             year: 2024,
             place: "Sevilla (Ejemplo)", 
@@ -54,6 +54,7 @@
             incompatible_benefit: 0
         }
     ];
+    */
 
     // --- Funciones de API ---
     async function fetchResources(searchParams = '', preserveMessages = false) {
