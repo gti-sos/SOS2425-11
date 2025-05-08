@@ -4,30 +4,30 @@ const RESOURCE_ALM = "autonomy-dependence-applications";
 function loadBackend_ALM(app, db) {
 
     //REDIRECT al portal de documentación
-    app.get(BASE_API+`/${RESOURCE_ALM}/docs`, (request, response) => {
+    app.get(BASE_API + `/${RESOURCE_ALM}/docs`, (request, response) => {
         return response.redirect("https://documenter.getpostman.com/view/42116317/2sAYkLnxYU");
     });
 
     // GET: Obtiene datos del recurso con búsquedas y paginación opcionales
-    app.get(BASE_API+`/${RESOURCE_ALM}`, (request, response) => {
+    app.get(BASE_API + `/${RESOURCE_ALM}`, (request, response) => {
         console.log(`New GET to /${RESOURCE_ALM}`, request.query);
-        
-        const { 
-            place, 
-            year, 
-            populationOver, 
+
+        const {
+            place,
+            year,
+            populationOver,
             populationUnder,
             dependentPopulationOver,
             dependentPopulationUnder,
             requestOver,
             requestUnder,
-            limit, 
-            offset 
+            limit,
+            offset
         } = request.query;
 
         // Construimos el query para NeDB
         const query = {}; // Este objeto es lo que NeDB usará para filtrar los documentos
-        
+
         // Aplicamos filtros si están presentes
         if (place) query.place = place;
         if (year) {
@@ -78,7 +78,7 @@ function loadBackend_ALM(app, db) {
                         }
                         if (count === 0) {
                             console.log("Database is empty, redirecting to loadInitialData");
-                            return response.redirect(BASE_API+`/${RESOURCE_ALM}/loadInitialData`);
+                            return response.redirect(BASE_API + `/${RESOURCE_ALM}/loadInitialData`);
                         } else {
                             // Si hay datos pero no coinciden con los filtros, devolvemos 404
                             console.log("No resources found matching the specified filters");
@@ -98,7 +98,7 @@ function loadBackend_ALM(app, db) {
     });
 
     // GET => loadInitialData (al hacer un GET cree 10 o más datos en el array de NodeJS si está vacío)
-    app.get(BASE_API+`/${RESOURCE_ALM}/loadInitialData`, (request, response) => {
+    app.get(BASE_API + `/${RESOURCE_ALM}/loadInitialData`, (request, response) => {
         console.log(`New GET to /${RESOURCE_ALM}/loadInitialData`)
         // Primero verificamos si hay datos en la base de datos
         db.find({}, (err, existingData) => {
@@ -123,7 +123,32 @@ function loadBackend_ALM(app, db) {
                 { year: 2024, place: "Castilla - La Mancha", population: 2084086, dependent_population: 282068, request: 98880 },
                 { year: 2024, place: "Cataluña", population: 7901963, dependent_population: 1040507, request: 382242 },
                 { year: 2024, place: "Comunitat Valenciana", population: 5216195, dependent_population: 644872, request: 218328 },
-                { year: 2024, place: "Extremadura", population: 1054306, dependent_population: 150537, request: 59450 }
+                { year: 2024, place: "Extremadura", population: 1054306, dependent_population: 150537, request: 59450 },
+                { year: 2024, place: "Galicia", population: 2699424, dependent_population: 469573, request: 85251 },
+                { year: 2024, place: "Madrid, Comunidad de", population: 6871903, dependent_population: 802837, request: 256424 },
+                { year: 2024, place: "Murcia, Región de", population: 1551692, dependent_population: 194149, request: 66811 },
+                { year: 2024, place: "Navarra, Comunidad Foral de", population: 672155, dependent_population: 81351, request: 21514 },
+                { year: 2024, place: "País Vasco", population: 2216302, dependent_population: 328385, request: 117575 },
+                { year: 2024, place: "Rioja, La", population: 322282, dependent_population: 42149, request: 14722 },
+                { year: 2024, place: "Ceuta y Melilla", population: 168545, dependent_population: 20183, request: 5608 },
+                { year: 2023, place: "Andalucía", population: 8500187, dependent_population: 1055830, request: 420976 },
+                { year: 2023, place: "Aragón", population: 1326315, dependent_population: 194402, request: 54128 },
+                { year: 2023, place: "Asturias, Principado de", population: 1004686, dependent_population: 193502, request: 46871 },
+                { year: 2023, place: "Balears, Illes", population: 1176659, dependent_population: 122308, request: 43584 },
+                { year: 2023, place: "Canarias", population: 2177701, dependent_population: 246866, request: 63120 },
+                { year: 2023, place: "Cantabria", population: 585402, dependent_population: 99678, request: 23876 },
+                { year: 2023, place: "Castilla y León", population: 2372640, dependent_population: 420966, request: 156550 },
+                { year: 2023, place: "Castilla - La Mancha", population: 2053328, dependent_population: 289935, request: 94676 },
+                { year: 2023, place: "Cataluña", population: 7792611, dependent_population: 1069708, request: 352939 },
+                { year: 2023, place: "Comunitat Valenciana", population: 5097967, dependent_population: 656267, request: 205653 },
+                { year: 2023, place: "Extremadura", population: 1054776, dependent_population: 159524, request: 58876 },
+                { year: 2023, place: "Galicia", population: 2690464, dependent_population: 485558, request: 83919 },
+                { year: 2023, place: "Madrid, Comunidad de", population: 6750336, dependent_population: 803577, request: 237216 },
+                { year: 2023, place: "Murcia, Región de", population: 1531878, dependent_population: 201423, request: 62760 },
+                { year: 2023, place: "Navarra, Comunidad Foral de", population: 664117, dependent_population: 82583, request: 22108 },
+                { year: 2023, place: "País Vasco", population: 2208174, dependent_population: 336616, request: 114252 },
+                { year: 2023, place: "Rioja, La", population: 319892, dependent_population: 45131, request: 14631 },
+                { year: 2023, place: "Ceuta y Melilla", population: 168287, dependent_population: 22272, request: 5237 }
             ];
             // Insertamos los datos iniciales
             db.insert(initialData, (err, newData) => {
@@ -138,11 +163,11 @@ function loadBackend_ALM(app, db) {
     });
 
     //POST: Agregar un nuevo recurso
-    app.post(BASE_API+`/${RESOURCE_ALM}`, (request, response) => {
+    app.post(BASE_API + `/${RESOURCE_ALM}`, (request, response) => {
         console.log(`New POST to /${RESOURCE_ALM}`);
         let newApplication = request.body;
         // Validación básica de campos requeridos
-        if (!newApplication.place || !newApplication.year || !newApplication.population || 
+        if (!newApplication.place || !newApplication.year || !newApplication.population ||
             !newApplication.dependent_population || !newApplication.request) {
             return response.status(400).json("Missing required fields");
         }
@@ -152,7 +177,7 @@ function loadBackend_ALM(app, db) {
                 console.error('Error:', err);
                 return response.status(500).json("Internal Error");
             }
-            
+
             if (existingRec) {
                 return response.status(409).json("Resource already exists");
             }
@@ -197,7 +222,7 @@ function loadBackend_ALM(app, db) {
 
     //GESTIÓN DE UN RECURSO ESPECÍFICO
     //GET -> Obtiene datos del recurso place
-    app.get(BASE_API+`/${RESOURCE_ALM}/:place`, (request, response) => {
+    app.get(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
         const placeName = request.params.place;
         console.log(`New GET to /${RESOURCE_ALM}/${placeName}`);
 
@@ -210,7 +235,7 @@ function loadBackend_ALM(app, db) {
                 console.log(`No data found for place: ${placeName}`);
                 return response.status(404).json("Resource not found");
             }
-            
+
             if (resources.length === 1) {
                 // Si solo hay un elemento, devolverlo como objeto (sin _id)
                 delete resources[0]._id;
@@ -270,7 +295,7 @@ function loadBackend_ALM(app, db) {
         // Validar formato de los campos enviados
         for (const [field, value] of Object.entries(newData)) {
             const fieldConfig = validFields[field];
-            
+
             // Validar tipo
             if (typeof value !== fieldConfig.type) {
                 return response.status(400).send(`Bad Request. Field '${field}' must be of type ${fieldConfig.type}`);
@@ -303,7 +328,7 @@ function loadBackend_ALM(app, db) {
 
 
     //DELETE -> Borra "recurso"
-    app.delete(BASE_API+`/${RESOURCE_ALM}/:place`, (request, response) => {
+    app.delete(BASE_API + `/${RESOURCE_ALM}/:place`, (request, response) => {
         const placeName = request.params.place;
         console.log(`New DELETE to /${RESOURCE_ALM}/${placeName}`);
         // Eliminamos todos los recursos con el mismo place
@@ -331,7 +356,7 @@ function loadBackend_ALM(app, db) {
 
     //GESTIÓN DE RELACIONES
     //GET -> Obtiene datos del recurso con mismo place y year
-    app.get(BASE_API+`/${RESOURCE_ALM}/:place/:year`, (request, response) => {
+    app.get(BASE_API + `/${RESOURCE_ALM}/:place/:year`, (request, response) => {
         const placeName = request.params.place;
         const yearNumber = request.params.year;
         const limit = parseInt(request.query.limit) || 10;
@@ -378,7 +403,7 @@ function loadBackend_ALM(app, db) {
     });
 
     //PUT: Si existe la relación, actualiza los datos
-    app.put(BASE_API+`/${RESOURCE_ALM}/:place/:year`, (request, response) => {
+    app.put(BASE_API + `/${RESOURCE_ALM}/:place/:year`, (request, response) => {
         const placeName = request.params.place;
         const yearNumber = request.params.year;
         const newData = request.body;
@@ -433,7 +458,7 @@ function loadBackend_ALM(app, db) {
     });
 
     //DELETE -> Borra la relación
-    app.delete(BASE_API+`/${RESOURCE_ALM}/:place/:year`, (request, response) => {
+    app.delete(BASE_API + `/${RESOURCE_ALM}/:place/:year`, (request, response) => {
         const placeName = request.params.place;
         const yearNumber = request.params.year;
 

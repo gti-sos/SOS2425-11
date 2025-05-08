@@ -13,5 +13,9 @@ export default defineConfig({
 				// rewrite: (path) => path.replace(/^\/api/, ''),
 			}
 		}
+	},
+	// Configuración para que Highcharts funcione correctamente con SSR (Server-Side Rendering) 
+	ssr: {
+		noExternal: ['highcharts']
 	}
 });

@@ -20,25 +20,43 @@
 		<!-- Feature Card 1: APIs -->
 		<div class="feature-card">
 			<!-- Icon placeholder -->
-			<span class="icon">⚙️</span> <!-- Or a more specific API icon -->
+			<span class="icon">⚙️</span>
+			<!-- Or a more specific API icon -->
 			<h2>APIs RESTful</h2>
 			<p>
-				Hemos diseñado e implementado APIs RESTful para gestionar datos relacionados con las pensiones y las ayudas a las personas vulnerables en el país. Incluyen operaciones CRUD completas y documentación detallada.
+				Hemos diseñado e implementado APIs RESTful para gestionar datos relacionados con las
+				pensiones y las ayudas a las personas vulnerables en el país. Incluyen operaciones CRUD
+				completas y documentación detallada.
 			</p>
 			<!-- API Buttons inside the card -->
 			<!-- Basic styling added inline for demonstration; move to <style> block for best practice -->
-			<div class="api-buttons-card-container" style="margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem;">
-				<a href="/api/v1/social-pension-payrolls" class="api-button ebt-button" style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #6e8efb; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+			<div
+				class="api-buttons-card-container"
+				style="margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem;"
+			>
+				<a
+					href="/api/v1/social-pension-payrolls"
+					class="api-button ebt-button"
+					style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #6e8efb; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;"
+				>
 					<!-- Consider using a more specific icon if available -->
 					<span class="icon-small" style="font-size: 1.2em;">📊</span> API EBT (Pensiones)
 				</a>
-				<a href="/api/v1/autonomy-dependence-applications" class="api-button alm-button" style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #a777e3; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+				<a
+					href="/api/v1/autonomy-dependence-applications"
+					class="api-button alm-button"
+					style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #a777e3; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;"
+				>
 					<!-- Consider using a more specific icon if available -->
 					<span class="icon-small" style="font-size: 1.2em;">🤝</span> API ALM (Ayudas Dependencia)
 				</a>
-				<a href="/api/v1/management-evolutions" class="api-button mtp-button" style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #45daed; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+				<a
+					href="/api/v1/management-evolutions"
+					class="api-button mtp-button"
+					style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #45daed; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;"
+				>
 					<!-- Consider using a more specific icon if available -->
-					<span class="icon-small" style="font-size: 1.2em;">🫂</span> API MTP (Ayudas sociales) 
+					<span class="icon-small" style="font-size: 1.2em;">🫂</span> API MTP (Ayudas sociales)
 				</a>
 			</div>
 		</div>
@@ -49,8 +67,36 @@
 			<span class="icon">📈</span>
 			<h2>Visualizaciones Interactivas</h2>
 			<p>
-				Próximamente lo integraremos para ofrecerte gráficos dinámicos y análisis visuales que te permitirán explorar los datos de manera más intuitiva.
+				Explora nuestros gráficos dinámicos y análisis visuales que te permitirán entender los datos
+				de manera más intuitiva.
 			</p>
+			<!-- Visualization Buttons -->
+			<div
+				class="api-buttons-card-container"
+				style="margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem;"
+			>
+				<a
+					href="/ALM/graph"
+					class="api-button alm-button"
+					style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #a777e3; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;"
+				>
+					<span class="icon-small" style="font-size: 1.2em;">📊</span> Visualización ALM
+				</a>
+				<a
+					href="/EBT/graph"
+					class="api-button ebt-button"
+					style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #6e8efb; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;"
+				>
+					<span class="icon-small" style="font-size: 1.2em;">📈</span> Visualización EBT
+				</a>
+				<a
+					href="/MTP/graph"
+					class="api-button mtp-button"
+					style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 6px; background-color: #45daed; color: white; transition: background-color 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;"
+				>
+					<span class="icon-small" style="font-size: 1.2em;">📉</span> Visualización MTP
+				</a>
+			</div>
 		</div>
 
 		<!-- Feature Card 3: Integraciones y Frontend -->
@@ -60,8 +106,7 @@
 			<h2>Frontend y Experiencia</h2>
 			<p>
 				Desarrollamos una interfaz de usuario moderna y responsive con SvelteKit, integrando
-				nuestras APIs y visualizaciones para ofrecer una experiencia de usuario fluida y
-				atractiva.
+				nuestras APIs y visualizaciones para ofrecer una experiencia de usuario fluida y atractiva.
 			</p>
 		</div>
 
