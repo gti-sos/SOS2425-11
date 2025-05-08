@@ -195,20 +195,21 @@
 								padding: 10,
 								style: {
 									fontSize: '12px',
-									width: '200px'
+									width: 'auto',
+									whiteSpace: 'nowrap'
 								},
+								useHTML: true,
 								formatter: function () {
 									const index = this.point.x;
 									const year = yearsData[index];
 									return (
-										'<b>' +
-										titleText +
-										'</b><br/>' +
+										'<div style="min-width: 100px;">' +
 										'Año ' +
 										year +
 										': <b>' +
 										this.y.toLocaleString('es-ES') +
-										'</b>'
+										'</b>' +
+										'</div>'
 									);
 								}
 							},
