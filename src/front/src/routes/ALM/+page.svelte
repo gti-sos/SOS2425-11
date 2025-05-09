@@ -692,6 +692,21 @@
 			</tbody>
 		</table>
 	</div>
+
+	<div class="mt-6 flex justify-center gap-4">
+		<a
+			href="/ALM/graph"
+			class="inline-block rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+		>
+			Ver Gráfica de Datos
+		</a>
+		<a
+			href="/ALM/cartogram"
+			class="inline-block rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+		>
+			Ver Cartograma de España
+		</a>
+	</div>
 </main>
 
 <style>
