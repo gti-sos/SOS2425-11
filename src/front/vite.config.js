@@ -6,11 +6,11 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	server: {
 		proxy: {
-			'/api': {
+			'/api/v1': {
 				target: 'http://localhost:16078',
 				changeOrigin: true,
 				// secure: false,
-				// rewrite: (path) => path.replace(/^\/api/, ''),
+				// rewrite: (path) => path.replace(/^\/api\/v1/, ''),
 			}
 		}
 	},
