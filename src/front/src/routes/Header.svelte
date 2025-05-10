@@ -4,7 +4,8 @@
         { name: "Front ALM", link: "/ALM" },
         { name: "Front EBT", link: "/EBT" },
         { name: "Front MTP", link: "/MTP" },
-        { name: "About", link: "/about" }
+        { name: "About", link: "/about" },
+        { name: "Integraciones", link: "/integrations" }
     ];
 </script>
 

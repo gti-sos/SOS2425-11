@@ -34,6 +34,7 @@
 		"vite": "^6.2.5"
 	},
 	"dependencies": {
-		"@sveltestrap/sveltestrap": "^7.1.0"
+		"@sveltestrap/sveltestrap": "^7.1.0",
+		"highcharts": "^12.2.0"
 	}
 }
