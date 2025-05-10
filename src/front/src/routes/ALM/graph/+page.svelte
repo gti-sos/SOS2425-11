@@ -9,7 +9,7 @@
 	// Obtener datos de la API
 	async function fetchData() {
 		try {
-			const response = await fetch('/api/v1/autonomy-dependence-applications');
+			const response = await fetch('/api/v1/autonomy-dependence-applications?limit=100');
 			if (!response.ok) {
 				throw new Error(`Error al cargar datos: ${response.status}`);
 			}
@@ -292,6 +292,10 @@
 </svelte:head>
 
 <main class="container">
+	<!-- Botón para ir al cartograma -->
+	<div style="text-align: right; margin-bottom: 20px;">
+		<a href="/ALM/cartogram" class="go-cartogram-btn">Ver Cartograma del último año</a>
+	</div>
 	<h1>Sparkline de Aplicaciones de Dependencia por Comunidades Autónomas</h1>
 	<h2>Evolución de los 2 últimos años</h2>
 
@@ -393,5 +397,19 @@
 		text-align: center;
 		margin-top: 20px;
 		font-style: italic;
+	}
+
+	.go-cartogram-btn {
+		display: inline-block;
+		padding: 10px 20px;
+		background-color: #1976d2;
+		color: #fff;
+		border-radius: 5px;
+		text-decoration: none;
+		font-weight: bold;
+		transition: background 0.2s;
+	}
+	.go-cartogram-btn:hover {
+		background-color: #125ea2;
 	}
 </style>

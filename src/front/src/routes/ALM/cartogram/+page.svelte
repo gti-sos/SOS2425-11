@@ -13,7 +13,7 @@
 	// Obtener datos de la API
 	async function fetchData() {
 		try {
-			const response = await fetch('/api/v1/autonomy-dependence-applications');
+			const response = await fetch('/api/v1/autonomy-dependence-applications?limit=100');
 			if (!response.ok) {
 				throw new Error(`Error al cargar datos: ${response.status}`);
 			}
@@ -79,8 +79,8 @@
 		return new Promise((resolve, reject) => {
 			// Función para comprobar si las bibliotecas están cargadas
 			const checkLibrariesLoaded = () => {
-				if (window.d3 && typeof window.d3.select === 'function' && window.topojson) {
-					console.log('D3 y TopoJSON cargados correctamente');
+				if (window.d3 && typeof window.d3.select === 'function' && window.topojson && window.d3.geoConicConformalSpain) {
+					console.log('D3, TopoJSON y d3-composite-projections cargados correctamente');
 					resolve();
 					return true;
 				}
@@ -92,7 +92,7 @@
 
 			// Si no están cargadas, esperar y comprobar cada 100ms
 			let attempts = 0;
-			const maxAttempts = 50; // 5 segundos máximo
+			const maxAttempts = 300; // 30 segundos máximo
 			const interval = setInterval(() => {
 				attempts++;
 				if (checkLibrariesLoaded()) {
@@ -122,6 +122,15 @@
 			// Obtener referencias explícitas a las bibliotecas cargadas
 			const d3 = window.d3;
 			const topojson = window.topojson;
+			
+			// Comprobación adicional para d3.geoConicConformalSpain
+			if (!d3.geoConicConformalSpain) {
+				const err = new Error('La proyección d3.geoConicConformalSpain no está disponible');
+				console.error(err);
+				error = err.message;
+				return;
+			}
+			
 			const processedData = processDataForCartogram();
 			
 			console.log('Datos procesados:', processedData);
@@ -175,10 +184,59 @@
 
 				// Mapear datos a regiones
 				const regionData = new Map();
+				
+				// Crear un mapa de nombres normalizados a los nombres exactos del dataset
+				// Mapeo bidireccional para cubrir ambas direcciones
+				const mapToDataNames = {
+					'Andalucía': 'Andalucía',
+					'Aragón': 'Aragón',
+					'Principado de Asturias': 'Asturias, Principado de',
+					'Illes Balears': 'Balears, Illes',
+					'Canarias': 'Canarias',
+					'Cantabria': 'Cantabria',
+					'Castilla y León': 'Castilla y León',
+					'Castilla-La Mancha': 'Castilla - La Mancha',
+					'Cataluña/Catalunya': 'Cataluña',
+					'Comunitat Valenciana': 'Comunitat Valenciana',
+					'Extremadura': 'Extremadura',
+					'Galicia': 'Galicia',
+					'Comunidad de Madrid': 'Madrid, Comunidad de',
+					'Región de Murcia': 'Murcia, Región de',
+					'Comunidad Foral de Navarra': 'Navarra, Comunidad Foral de',
+					'País Vasco/Euskadi': 'País Vasco',
+					'La Rioja': 'Rioja, La',
+					'Ciudad Autónoma de Ceuta': 'Ceuta y Melilla',
+					'Ciudad Autónoma de Melilla': 'Ceuta y Melilla'
+					// Gibraltar no lo tenemos en los datos
+				};
+				
+				// Mapeo inverso para buscar desde nombres de API a nombres de mapa
+				const dataToMapNames = {};
+				for (const [mapName, dataName] of Object.entries(mapToDataNames)) {
+					dataToMapNames[dataName] = mapName;
+				}
+				
+				// Imprimir nombres de las regiones del mapa para depuración
+				console.log("Nombres de regiones en el mapa:", regions.features.map(f => f.properties.name));
+				
+				// Imprimir nombres de regiones en los datos
+				console.log("Nombres de regiones en los datos:", processedData.map(d => d.name));
+				
+				// Hacer la asignación entre datos y regiones
 				processedData.forEach(d => {
+					// Añadir directamente con el nombre original
 					regionData.set(d.name, d);
+					
+					// Intentar encontrar el nombre del mapa correspondiente
+					const mapName = dataToMapNames[d.name];
+					if (mapName) {
+						regionData.set(mapName, d);
+						console.log(`Mapeado ${d.name} a ${mapName}`);
+					} else {
+						console.log(`No se encontró correspondencia para ${d.name}`);
+					}
 				});
-
+				
 				// Crear grupo para el mapa
 				const mapGroup = svg.append('g').attr('class', 'map-group');
 
@@ -191,7 +249,10 @@
 					.attr('d', path)
 					.attr('class', 'region')
 					.attr('fill', d => {
-						const data = regionData.get(d.properties.name);
+						const regionName = d.properties.name;
+						// Intentar obtener los datos directamente
+						let data = regionData.get(regionName);
+						
 						if (data) {
 							// Escala de color basada en el valor
 							const colorScale = d3.scaleLinear()
@@ -199,6 +260,7 @@
 								.range(['#f7fbff', '#08519c']);
 							return colorScale(data.value);
 						}
+						console.log(`No hay datos para la región: ${regionName}`);
 						return '#ccc';
 					})
 					.attr('stroke', '#fff')
@@ -215,12 +277,17 @@
 				// Crear centroide para cada región
 				const centroids = regions.features.map(d => {
 					const centroid = path.centroid(d);
-					const data = regionData.get(d.properties.name);
+					const regionName = d.properties.name;
+
+					// Intentar obtener los datos directamente
+					let data = regionData.get(regionName);
+
 					return {
 						x: centroid[0],
 						y: centroid[1],
 						r: data ? Math.sqrt(data.value) / 10 : 5,
-						name: d.properties.name,
+						name: regionName,
+						originalName: data ? data.name : null,
 						data: data
 					};
 				});
@@ -262,11 +329,22 @@
 								.style('left', (event.pageX + 10) + 'px')
 								.style('top', (event.pageY + 10) + 'px')
 								.html(`
-									<strong>${d.name}</strong><br>
+									<strong>${d.name}</strong>
+									${d.originalName && d.originalName !== d.name ? `<br><em>(${d.originalName})</em>` : ''}
+									<br>
 									<strong>Año:</strong> ${d.data.year}<br>
 									<strong>Solicitudes:</strong> ${d.data.request.toLocaleString('es-ES')}<br>
 									<strong>Población:</strong> ${d.data.population.toLocaleString('es-ES')}<br>
 									<strong>Población Dependiente:</strong> ${d.data.dependent_population.toLocaleString('es-ES')}
+								`);
+						} else {
+							d3.select('#tooltip')
+								.style('display', 'block')
+								.style('left', (event.pageX + 10) + 'px')
+								.style('top', (event.pageY + 10) + 'px')
+								.html(`
+									<strong>${d.name}</strong><br>
+									<em>No hay datos disponibles</em>
 								`);
 						}
 					})
@@ -349,7 +427,10 @@
 				// Agregar tooltip para regiones
 				regionPaths
 					.on('mouseover', function(event, d) {
-						const data = regionData.get(d.properties.name);
+						const regionName = d.properties.name;
+						// Intentar obtener los datos directamente
+						let data = regionData.get(regionName);
+						
 						if (data) {
 							// Crear tooltip
 							d3.select('#tooltip')
@@ -357,11 +438,23 @@
 								.style('left', (event.pageX + 10) + 'px')
 								.style('top', (event.pageY + 10) + 'px')
 								.html(`
-									<strong>${d.properties.name}</strong><br>
+									<strong>${regionName}</strong>
+									${data.name && data.name !== regionName ? `<br><em>(${data.name})</em>` : ''}
+									<br>
 									<strong>Año:</strong> ${data.year}<br>
 									<strong>Solicitudes:</strong> ${data.request.toLocaleString('es-ES')}<br>
 									<strong>Población:</strong> ${data.population.toLocaleString('es-ES')}<br>
 									<strong>Población Dependiente:</strong> ${data.dependent_population.toLocaleString('es-ES')}
+								`);
+						} else {
+							// Mostrar tooltip con mensaje de que no hay datos
+							d3.select('#tooltip')
+								.style('display', 'block')
+								.style('left', (event.pageX + 10) + 'px')
+								.style('top', (event.pageY + 10) + 'px')
+								.html(`
+									<strong>${regionName}</strong><br>
+									<em>No hay datos disponibles</em>
 								`);
 						}
 					})
@@ -397,6 +490,13 @@
 					error = 'Error: D3 no se cargó correctamente';
 					return;
 				}
+				
+				// Verificar que d3.geoConicConformalSpain está disponible
+				if (!window.d3.geoConicConformalSpain) {
+					console.error('La proyección d3.geoConicConformalSpain no está disponible');
+					error = 'Error: La proyección d3.geoConicConformalSpain no está disponible';
+					return;
+				}
 			}
 
 			// Iniciar el cartograma después de cargar las bibliotecas
@@ -414,7 +514,7 @@
 	<!-- Cargar D3 y bibliotecas relacionadas directamente en el head -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-	<script src="https://unpkg.com/d3-composite-projections@1.3.0"></script>
+	<script src="https://unpkg.com/d3-composite-projections@1.4.0"></script>
 </svelte:head>
 
 <main class="container">
