@@ -77,6 +77,5 @@ app.listen(PORT,()=>{
 */
 
 
-export{loadBackend_EBT, loadBackend_ALM, loadBackend_MTP, db_ALM, db_EBT, db_MTP};
 
 
