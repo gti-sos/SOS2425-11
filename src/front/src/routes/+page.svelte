@@ -119,6 +119,12 @@
 		</div>
 		-->
 	</div>
+
+	<div class="analytics-section">
+		<h2>Análisis Integrado</h2>
+		<p>Visualización combinada de datos de todas las APIs</p>
+		<a href="/analytics" class="analytics-btn">Ver análisis integrado</a>
+	</div>
 </div>
 
 <style>
@@ -263,5 +269,29 @@
 		.feature-card {
 			min-height: auto; /* Adjust min-height */
 		}
+	}
+
+	.analytics-section {
+		background-color: #f5f5f5;
+		padding: 20px;
+		border-radius: 8px;
+		text-align: center;
+		margin-bottom: 30px;
+	}
+	
+	.analytics-btn {
+		display: inline-block;
+		padding: 10px 20px;
+		background-color: #1976d2;
+		color: #fff;
+		border-radius: 5px;
+		text-decoration: none;
+		font-weight: bold;
+		margin-top: 10px;
+		transition: background 0.2s;
+	}
+	
+	.analytics-btn:hover {
+		background-color: #125ea2;
 	}
 </style>

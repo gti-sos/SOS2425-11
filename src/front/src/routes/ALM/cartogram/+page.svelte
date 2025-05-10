@@ -518,6 +518,10 @@
 </svelte:head>
 
 <main class="container">
+	<!-- Botón para analíticas integradas -->
+	<div style="text-align: right; margin-bottom: 20px;">
+		<a href="/ALM/graph" class="go-graph-btn">Ver Sparkline</a>
+	</div>
 	<h1>Cartograma de Aplicaciones de Dependencia por Comunidades Autónomas</h1>
 	<h2>
 		Tamaño proporcional a {selectedVariable === 'request'
@@ -646,5 +650,19 @@
 		stroke: #333;
 		stroke-width: 1.5;
 		cursor: pointer;
+	}
+
+	.go-graph-btn {
+		display: inline-block;
+		padding: 10px 20px;
+		background-color: #1976d2;
+		color: #fff;
+		border-radius: 5px;
+		text-decoration: none;
+		font-weight: bold;
+		transition: background 0.2s;
+	}
+	.go-graph-btn:hover {
+		background-color: #125ea2;
 	}
 </style>
