@@ -545,6 +545,9 @@
 			await tick(); // Esperar que el DOM se actualice para mostrar el error
 		}
 	});
+
+	// Importar el nuevo componente de integración
+	import EnergyPopulationIntegration from './EnergyPopulationIntegration.svelte';
 </script>
 
 <main>
@@ -610,6 +613,48 @@
 			</ul>
 		</div>
 	{/if}
+
+	<!-- Nueva sección para la integración de Energía y Población -->
+	<hr class="section-divider" />
+	<section class="integration-section">
+		<h2>Integración: Energía Vendida por Tecnología y Población (2024)</h2>
+		<EnergyPopulationIntegration />
+		<div class="explanation">
+			<h3>Interpretación del gráfico</h3>
+			<p>
+				Este gráfico muestra una combinación de datos de energía y población para las Comunidades
+				Autónomas de España en el año 2024:
+			</p>
+			<ul>
+				<li>
+					<strong>Columnas:</strong> Representan la cantidad de energía vendida (en GWh) para cada tipo
+					de tecnología (Solar FV, Eólica, Biomasa, etc.) en cada comunidad.
+				</li>
+				<li>
+					<strong>Línea Naranja:</strong> Muestra la energía total vendida (en GWh) acumulada de todas
+					las tecnologías para cada comunidad.
+				</li>
+				<li>
+					<strong>Tooltip:</strong> Al pasar el cursor sobre una comunidad, se muestra un resumen con
+					la población de la comunidad, la energía vendida por cada tecnología y la energía total vendida.
+				</li>
+			</ul>
+			<p>
+				Este análisis permite comparar la producción energética por diferentes fuentes entre
+				comunidades y relacionarla visualmente con su población a través del tooltip.
+			</p>
+			<p><strong>Fuentes de datos:</strong></p>
+			<ul>
+				<li>
+					Datos de energía vendida: <a
+						href="https://sos2425-12.onrender.com/api/v1/annual-evolutions?year=2024"
+						target="_blank">API Externa (SOS2425-12 - annual-evolutions)</a
+					>
+				</li>
+				<li>Datos de población: API interna de este proyecto (autonomy-dependence-applications)</li>
+			</ul>
+		</div>
+	</section>
 </main>
 
 <style>
@@ -672,6 +717,13 @@
 		color: #333;
 		margin-top: 0;
 		font-size: 1.5rem;
+	}
+
+	.explanation h3 {
+		color: #333;
+		margin-top: 0;
+		margin-bottom: 0.5rem;
+		font-size: 1.3rem;
 	}
 
 	.explanation p,
@@ -740,5 +792,27 @@
 
 	a:hover {
 		text-decoration: underline;
+	}
+
+	/* Separador entre secciones de integración */
+	.section-divider {
+		border: none;
+		height: 1px;
+		background-color: #ddd; /* Color suave para el separador */
+		margin-top: 3rem;
+		margin-bottom: 3rem;
+	}
+
+	.integration-section {
+		margin-bottom: 2rem; /* Espacio debajo de cada sección de integración */
+	}
+
+	.integration-section h2 {
+		text-align: center;
+		color: #333;
+		margin-bottom: 1.5rem;
+		font-size: 1.8rem;
+		border-bottom: 2px solid #4caf50; /* Un color diferente para el subtítulo de la nueva integración */
+		padding-bottom: 0.8rem;
 	}
 </style>
