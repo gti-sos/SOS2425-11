@@ -12,22 +12,25 @@
     async function fetchAndCombineData() {
         try {
             // Obtener datos de ambas APIs con límite alto para asegurar todos los datos
-            const [almResponse, ebtResponse] = await Promise.all([
+            const [almResponse, ebtResponse, mtpResponse] = await Promise.all([
                 fetch(`/api/v1/autonomy-dependence-applications?limit=100`),
-                fetch(`/api/v1/social-pension-payrolls?limit=100`)
+                fetch(`/api/v1/social-pension-payrolls?limit=100`),
+                fetch(`/api/v1/management-evolutions?limit=100`)
             ]);
 
-            if (!almResponse.ok || !ebtResponse.ok) {
+            if (!almResponse.ok || !ebtResponse.ok || !mtpResponse.ok) {
                 throw new Error("Error al obtener datos de las APIs");
             }
 
             // Convertir respuestas a JSON
             const almData = await almResponse.json();
             const ebtData = await ebtResponse.json();
+            const mtpData = await mtpResponse.json();
 
             // Filtrar por el año más reciente
             const almFiltered = almData.filter(item => item.year === year);
             const ebtFiltered = ebtData.filter(item => item.year === year);
+            const mtpFiltered = mtpData.filter(item => item.year === year);
 
             // Crear mapeo de nombres para normalizar entre APIs
             const placeMapping = {
@@ -63,7 +66,9 @@
                     dependent_population: item.dependent_population,
                     request_count: item.request,
                     disability_number: 0, // Valores iniciales
-                    disability_amount: 0  // Se actualizarán con datos de EBT
+                    disability_amount: 0,  // Se actualizarán con datos de EBT
+                    legal_residence: 0, // Valores iniciales
+                    economical_resource: 0 // Se actualizarán con datos de MTP
                 });
             });
 
@@ -83,7 +88,32 @@
                         dependent_population: 0, // No hay datos de ALM
                         request_count: 0,        // No hay datos de ALM
                         disability_number: item.disability_number,
-                        disability_amount: item.disability_amount
+                        disability_amount: item.disability_amount,
+                        legal_residence: 0, 
+                        economical_resource: 0 
+                    });
+                }
+            });
+
+            // Integrar datos de MTP
+            mtpFiltered.forEach(item => {
+                const standardPlace = item.place;
+                
+                if (dataMap.has(standardPlace)) {
+                    // Actualizar datos ya existentes
+                    const existingData = dataMap.get(standardPlace);
+                    existingData.legal_residence = item.legal_residence;
+                    existingData.economical_resource = item.economical_resource;
+                } else {
+                    // Crear nueva entrada si no existe
+                    dataMap.set(standardPlace, {
+                        place: standardPlace,
+                        dependent_population: 0, // No hay datos de ALM
+                        request_count: 0,        // No hay datos de ALM
+                        disability_number: 0,    // No hay datos de EBT
+                        disability_amount: 0,    // No hay datos de EBT
+                        legal_residence: item.legal_residence,
+                        economical_resource: item.economical_resource
                     });
                 }
             });
@@ -149,6 +179,15 @@
                 property: "disability_amount",
                 color: "#FBBC05", // Amarillo Google
                 formatter: (value) => (value / 1000000).toFixed(0)
+            },            {
+                name: "Residencia Legal",
+                property: "legal_residence",
+                color: "#f5f542" // Amarillo 
+            },
+            {
+                name: "Recursos Económicos",
+                property: "economical_resource",
+                color: "#c517cf" // Morado
             }
         ];
         
@@ -392,10 +431,12 @@
                         <li><span class="color-box blue"></span> <strong>Solicitudes:</strong> Personas que han solicitado ayudas de dependencia.</li>
                         <li><span class="color-box red"></span> <strong>Discapacitados:</strong> Personas que reciben prestaciones por discapacidad.</li>
                         <li><span class="color-box yellow"></span> <strong>Ayuda (Millones €):</strong> Importe económico de las ayudas en millones de euros.</li>
+                        <li><span class="color-box light-yellow"></span> <strong>Residencia Legal:</strong> Número de solicitudes rechazadas a causa de la residencia legal del solicitante.</li>
+                        <li><span class="color-box purple"></span> <strong>Recursos económicos:</strong> Número de solicitudes rechazadas a causa de los recursos económicos del solicitante.</li>
                     </ul>
                 </li>
             </ul>
-            <p>Los datos combinan información de las APIs de aplicaciones de dependencia (ALM) y nóminas de pensiones sociales (EBT), permitiendo comparar la proporción entre la población potencialmente dependiente, las solicitudes realizadas, y las ayudas finalmente concedidas.</p>
+            <p>Los datos combinan información de las APIs de aplicaciones de dependencia (ALM), nóminas de pensiones sociales (EBT) y gestión de ayudas sociales (MTP), permitiendo comparar la proporción entre la población potencialmente dependiente, las solicitudes realizadas, y las ayudas finalmente concedidas.</p>
         </div>
     {/if}
 </main>
@@ -488,6 +529,8 @@
     .red { background-color: #EA4335; }
     .yellow { background-color: #FBBC05; }
     .green { background-color: #34A853; }
+    .light-yellow { background-color: #f5f542; }
+    .purple { background-color: #c517cf; }
     
     /* Estilos para tooltips más bonitos */
     #tooltip {
