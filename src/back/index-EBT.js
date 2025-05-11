@@ -1,6 +1,5 @@
 const BASE_API = "/api/v1";
 const RESOURCE_EBT = "social-pension-payrolls";
-import dataEBT from './data-EBT.js';
 
 
 function loadBackend_EBT(app, db) {
@@ -105,8 +104,7 @@ function loadBackend_EBT(app, db) {
                             return response.status(500).send("Internal Error");
                         }
                         if (count === 0) {
-                            console.log("Database empty, redirecting to load initial data.");
-                             return response.redirect(BASE_API + `/${RESOURCE_EBT}/loadInitialData`);
+                            console.log("Database empty, please load initial data.");
                         } else {
                              console.log("No data found matching the empty query, though DB is not empty.");
                              return response.status(404).send("No data matches the query");

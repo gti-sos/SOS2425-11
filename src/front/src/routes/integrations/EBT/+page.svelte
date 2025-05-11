@@ -1,4 +1,6 @@
 <script>
+
+
     // import { path } from 'express/lib/application'; // Eliminada esta línea
     import { onMount } from 'svelte';
 
@@ -27,6 +29,14 @@
         {
             name: 'Población española (API Ninjas, Oauth, Proxy, Barras con Plotly)',
             path: '/integrations/EBT/api-ninjas-ebt-correlation'
+        },
+        {
+            name: 'Tasa de cambio (Frankfurter, Proxy, Líneas con Plotly)',
+            path: '/integrations/EBT/api-frankfurter'
+        },
+        {
+            name: 'Estadísticas covid EEUU (Covid Tracking, Proxy, Indicadores con Plotly)',
+            path: '/integrations/EBT/api-covid'
         }
         
     ];
