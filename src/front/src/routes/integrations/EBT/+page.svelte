@@ -5,24 +5,28 @@
     // Define aquí las integraciones específicas de tu carpeta EBT
     const otherIntegrations = [
         {
-            name: 'G10 - Estadísticas de Registros (Radar)',
+            name: 'G10 - Estadísticas de Registros (Radar con chart.js)',
             path: '/integrations/EBT/g10-registration-stats'
         },
         {
-            name: 'G16 - Estadísticas de Emigración (Área Polar)',
+            name: 'G16 - Estadísticas de Emigración (Área Polar con chart.js)',
             path: '/integrations/EBT/g16-emigration-stats'
         },
         {
-            name: 'G12 - Estadísticas de consumo (Barras)',
+            name: 'G12 - Estadísticas de consumo (Barras con chart.js)',
             path: '/integrations/EBT/g12-annual-consumptions'
         },
         {
-            name: 'G13 - Estadísticas de parques nacionales (Burbujas)',
+            name: 'G13 - Estadísticas de parques nacionales (Burbujas con chart.js)',
             path: '/integrations/EBT/g13-national-parks'
         },
         {
-            name: 'G14 - Estadísticas de delitos cibernéticos (Dispersión)',
+            name: 'G14 - Estadísticas de delitos cibernéticos (Dispersión con chart.js)',
             path: '/integrations/EBT/g14-cybercrime-data'
+        },
+        {
+            name: 'Población española (API Ninjas, Oauth, Proxy, Barras con Plotly)',
+            path: '/integrations/EBT/api-ninjas-ebt-correlation'
         }
         
     ];
