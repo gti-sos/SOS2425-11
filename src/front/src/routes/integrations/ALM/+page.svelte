@@ -548,6 +548,47 @@
 
 	// Importar el nuevo componente de integración
 	import EnergyPopulationIntegration from './EnergyPopulationIntegration.svelte';
+
+	// Definición de las integraciones que se mostrarán con iframes
+	const iframeIntegrations = [
+		{
+			title: 'Estadísticas ERTE por Sector (G18)',
+			path: '/integrations/ALM/g18-dana-erte-stats?embedded=true',
+			description:
+				'Visualización polar (barras radiales) que muestra el total de trabajadores con contrato suspendido, agrupados por sector económico, según los datos de ERTE relacionados con DANA.'
+		},
+		{
+			title: 'Accidentes con Animales por Provincia (G20)',
+			path: '/integrations/ALM/g20-accidents-with-animals?embedded=true',
+			description:
+				'Gráfico de área que representa el número total de accidentes de tráfico con implicación de animales, agregados por provincia.'
+		},
+		{
+			title: 'Compra-Venta de Viviendas (G21)',
+			path: '/integrations/ALM/g21-home-buying-selling-stats?embedded=true',
+			description:
+				'Treemap que ilustra las estadísticas de compra-venta de viviendas, mostrando el volumen por Comunidades Autónomas y Provincias (datos acumulados de todos los años).'
+		},
+		{
+			title: 'Gestión de Contactos de HubSpot (Externa)',
+			path: '/integrations/ALM/hubspot?embedded=true',
+			description:
+				'Interfaz para visualizar, crear, actualizar y eliminar contactos de HubSpot a través de un proxy local. Permite la gestión de contactos directamente desde esta página.'
+		},
+		{
+			title: 'Buscador de Imágenes de la NASA (Externa)',
+			path: '/integrations/ALM/nasa?embedded=true',
+			description:
+				'Herramienta de búsqueda que permite explorar la vasta colección de imágenes de la NASA. Introduce un término para descubrir fotografías e ilustraciones del espacio.'
+		},
+		{
+			title: 'Personajes de Rick and Morty (Externa)',
+			path: '/integrations/ALM/rick-and-morty?embedded=true',
+			description:
+				'Visualización de personajes de la popular serie Rick and Morty, obtenidos a través de su API pública mediante un proxy local. Muestra imágenes e información de los personajes.'
+		}
+		// Puedes añadir más aquí si es necesario
+	];
 </script>
 
 <main>
@@ -654,6 +695,43 @@
 				<li>Datos de población: API interna de este proyecto (autonomy-dependence-applications)</li>
 			</ul>
 		</div>
+	</section>
+
+	<!-- Nueva sección para las integraciones G18, G20, G21 con iframes -->
+	<hr class="section-divider" />
+	<section class="iframe-integrations-container">
+		<h2>Otras Integraciones (Visualizaciones Individuales)</h2>
+		<p class="intro-text-iframe">
+			Las siguientes visualizaciones se cargan desde sus páginas dedicadas y se muestran aquí para
+			una vista previa. Haz clic en el título de cada una para abrirla en una nueva pestaña con
+			funcionalidad completa.
+		</p>
+
+		{#if iframeIntegrations.length === 0}
+			<p>No hay otras integraciones para mostrar en este momento.</p>
+		{:else}
+			{#each iframeIntegrations as integration (integration.path)}
+				<div class="integration-item">
+					<h3>
+						<a href={integration.path} target="_blank" rel="noopener noreferrer">
+							{integration.title}
+						</a>
+					</h3>
+					<p class="description-iframe">{integration.description}</p>
+					<div class="iframe-wrapper">
+						<iframe
+							src={integration.path}
+							title="Previsualización de {integration.title}"
+							width="100%"
+							height="550"
+							frameborder="0"
+							loading="lazy"
+							sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+						></iframe>
+					</div>
+				</div>
+			{/each}
+		{/if}
 	</section>
 </main>
 
@@ -814,5 +892,79 @@
 		font-size: 1.8rem;
 		border-bottom: 2px solid #4caf50; /* Un color diferente para el subtítulo de la nueva integración */
 		padding-bottom: 0.8rem;
+	}
+
+	/* ESTILOS PARA LA NUEVA SECCIÓN DE IFRAMES */
+	.iframe-integrations-container h2 {
+		text-align: center;
+		color: #2c3e50; /* Un color diferente para distinguir secciones */
+		margin-top: 2.5rem;
+		margin-bottom: 1rem;
+		font-size: 2em; /* Ligeramente más pequeño que el H1 principal */
+		border-bottom: 2px solid #3498db; /* Color de borde diferente */
+		padding-bottom: 0.8rem;
+	}
+
+	.intro-text-iframe {
+		text-align: center;
+		font-size: 1.05em;
+		color: #555;
+		margin-bottom: 30px;
+		max-width: 800px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.integration-item {
+		background-color: #ffffff; /* Fondo blanco para cada item de iframe */
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		margin-bottom: 30px; /* Espacio entre items */
+		padding: 20px;
+		box-shadow: 0 3px 6px rgba(0, 0, 0, 0.04);
+		transition: box-shadow 0.3s ease;
+	}
+
+	.integration-item:hover {
+		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.08);
+	}
+
+	.integration-item h3 {
+		/* Usamos H3 para los títulos de iframes */
+		margin-top: 0;
+		margin-bottom: 8px;
+		font-size: 1.6em;
+	}
+
+	.integration-item h3 a {
+		text-decoration: none;
+		color: #2980b9; /* Un azul diferente para estos enlaces */
+		transition: color 0.3s ease;
+	}
+
+	.integration-item h3 a:hover {
+		color: #1f618d;
+		text-decoration: underline;
+	}
+
+	.description-iframe {
+		font-size: 0.95em;
+		color: #666;
+		margin-bottom: 15px;
+		line-height: 1.5;
+	}
+
+	.iframe-wrapper {
+		/* Cambiado de .iframe-container para evitar colisión */
+		border: 1px dashed #d0d0d0;
+		padding: 8px;
+		border-radius: 4px;
+		background-color: #fdfdfd;
+		overflow: hidden;
+	}
+
+	.iframe-wrapper iframe {
+		display: block;
+		border-radius: 3px;
 	}
 </style>
