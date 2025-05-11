@@ -16,6 +16,8 @@ jobs:
         working-directory: ./src/back
         run: npm install
       - name: Build front
+        env:
+          HUBSPOT_ACCESS_TOKEN: ${{ secrets.HUBSPOT_ACCESS_TOKEN }}
         run: npm run build:front
       - name: Start server
         run: npm run start &
