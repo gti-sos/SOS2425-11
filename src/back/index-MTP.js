@@ -110,6 +110,7 @@ function loadBackend_MTP(app, db) {
                 }
 
                 //Si no hay datos lleva al loadInitData
+                /*
                 if (!(applications || applications.length === 0)) {
                     db.count({}, (err, count) => {
                         if (err) {
@@ -125,7 +126,7 @@ function loadBackend_MTP(app, db) {
                             return response.status(404).send('No resources found matching the specified filter');
                         }
                     });
-                } else {
+                } else {*/
                     //Si hay datos los envía
                     if (applications.length === 1) {
                         delete applications[0]._id; //Elimino el campo id pues es algo que crea NEDB automáticamente pero no debe verlo el usuario final.
@@ -133,7 +134,7 @@ function loadBackend_MTP(app, db) {
                     } else {
                         response.status(200).send(applications.map(r => { delete r._id; return r }));
                     }
-                }
+                //}
             });
     });
 

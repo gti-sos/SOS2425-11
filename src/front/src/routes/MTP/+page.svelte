@@ -123,6 +123,49 @@
 		}
 	}
 
+	    async function handleLoadInitialData() {
+        errorMessage = null;
+        successMessage = null;
+        apiError = null; // Limpia también el error general de la API
+        isLoading = true; // Indica que se está cargando
+
+        try {
+            // Realiza la llamada al endpoint de carga inicial.
+            // Según tus tests de Newman, es una petición GET y espera un 201.
+            const response = await fetch(`${API_URL}/loadInitialData`, {
+                method: 'GET' // O 'POST' si el backend está configurado para esperar POST
+            });
+
+            // Manejo de la respuesta del servidor
+            // 201 Created (según tus tests exitosos de Newman) o 200 OK son respuestas de éxito esperadas.
+            if (response.status === 201 || response.status === 200) {
+                successMessage = 'Datos iniciales cargados correctamente.'; // Mensaje de éxito
+                // Importante: Recargar los recursos para mostrar los datos recién añadidos
+                // Pasamos 'undefined' para no aplicar filtros y 'true' para preservar el mensaje de éxito actual.
+                await fetchResources(undefined, true);
+            } else if (response.status === 409) {
+                // Si el endpoint devuelve 409 Conflict, significa que los datos ya existen
+                errorMessage = 'Error al cargar: Los datos iniciales ya existen o ya han sido cargados.';
+            } else {
+                // Cualquier otro código de estado inesperado del servidor
+                errorMessage = `Error al cargar datos iniciales: Problema inesperado en el servidor (Código: ${response.status}). Inténtalo de nuevo.`;
+                console.error(`Load Initial Data Error ${response.status}: ${response.statusText}`);
+            }
+        } catch (err) {
+            // Manejo de errores de red (servidor no accesible, problema de conexión, etc.)
+            errorMessage =
+                'Error al cargar datos iniciales: Ocurrió un problema de conexión. Inténtalo de nuevo más tarde.';
+            console.error('Load Initial Data Fetch error:', err); // Loguea el error técnico en la consola
+        } finally {
+            // Finaliza el estado de carga, pero solo si NO se estableció un mensaje de éxito.
+            // Si hubo éxito, fetchResources ya manejará la carga y su finalización.
+            if (!successMessage) {
+                isLoading = false;
+            }
+        }
+    }
+
+
 	async function handleCreate(event) {
 		event.preventDefault(); // Prevenir recarga de página por defecto del form
 		errorMessage = null;
@@ -518,52 +561,19 @@
 						disabled={isLoading}
 					/>
 				</div>
-				<!-- Contenedor de botones modificado: alineado a la izquierda con espacio -->
-				<div class="flex items-end justify-start gap-4 md:col-span-3">
-					<!-- Botón Crear Registro (ahora a la izquierda) -->
-					<button
-						type="submit"
-						class="transform rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-2 font-bold text-white shadow-md transition duration-150 ease-in-out hover:scale-105 hover:from-green-600 hover:to-emerald-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
-						disabled={isLoading}
-					>
-						{#if isLoading && !successMessage && !errorMessage && !apiError}
-							<!-- Show spinner only during active loading state initiated by this form -->
-							<svg
-								class="mr-2 inline h-4 w-4 animate-spin text-white"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-							>
-								<circle
-									class="opacity-25"
-									cx="12"
-									cy="12"
-									r="10"
-									stroke="currentColor"
-									stroke-width="4"
-								></circle>
-								<path
-									class="opacity-75"
-									fill="currentColor"
-									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-								></path>
-							</svg>
-							Creando...
-						{:else}
-							Crear Registro
-						{/if}
-					</button>
+				<!-- Contenedor de botones: uno a la izquierda, otro a la derecha -->
+				<div class="flex items-end justify-between md:col-span-3">
+					<!-- Cambiado a justify-between y quitado gap-4 -->
 
-					<!-- NUEVO Botón Cargar Registros -->
+					<!-- Botón Cargar Registros (Aparece primero = IZQUIERDA) -->
 					<button
 						type="button"
-						class="transform rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-2 font-bold text-white shadow-md transition duration-150 ease-in-out hover:scale-105 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
-                        on:click={handleLoadInitialData}
+						class="transform rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-2 font-bold text-white shadow-md transition duration-150 ease-in-out hover:scale-105 hover:from-blue-600 hover:to-indigo-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+						on:click={handleLoadInitialData}
 						disabled={isLoading}
-						title="Cargar los datos iniciales predefinidos"
+						title="Cargar los datos iniciales"
 					>
 						{#if isLoading && !successMessage && !errorMessage && !apiError}
-							<!-- Puedes añadir un spinner específico si quieres diferenciar la carga -->
 							<svg
 								class="mr-2 inline h-4 w-4 animate-spin text-white"
 								xmlns="http://www.w3.org/2000/svg"
@@ -589,7 +599,39 @@
 							Cargar Registros
 						{/if}
 					</button>
-					<!-- FIN NUEVO Botón -->
+
+					<!-- Botón Crear Registro (Aparece segundo = DERECHA) -->
+					<button
+						type="submit"
+						class="transform rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-2 font-bold text-white shadow-md transition duration-150 ease-in-out hover:scale-105 hover:from-green-600 hover:to-emerald-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+						disabled={isLoading}
+					>
+						{#if isLoading && !successMessage && !errorMessage && !apiError}
+							<svg
+								class="mr-2 inline h-4 w-4 animate-spin text-white"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<circle
+									class="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									stroke-width="4"
+								></circle>
+								<path
+									class="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+								></path>
+							</svg>
+							Creando...
+						{:else}
+							Crear Registro
+						{/if}
+					</button>
 				</div>
 			</div>
 		</form>
