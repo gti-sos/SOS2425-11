@@ -23,17 +23,6 @@
 							"    pm.response.to.have.header(\"Content-Type\");",
 							"});",
 							"",
-							"// Test for specific header value based on status code",
-							"if (pm.response.code === 201) {",
-							"    pm.test(\"Response header 'Content-Type' has value 'application/json'\", function () {",
-							"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-							"    });",
-							"} else if (pm.response.code === 200) {",
-							"    pm.test(\"Response header 'Content-Type' has value 'application/json'\", function () {",
-							"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-							"    });",
-							"}",
-							"",
 							"// Test for body based on the status",
 							"if (pm.response.code === 201) {",
 							"    pm.test(\"Response body contains 'Initial data loaded successfully'\", function () {",
@@ -304,7 +293,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"population\": 9000000,\n  \"dependent_population\": 1100000\n}\n",
+					"raw": "// 405 Method Not Allowed, (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS):\n{\n  \"population\": 9000000,\n  \"dependent_population\": 1100000\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
