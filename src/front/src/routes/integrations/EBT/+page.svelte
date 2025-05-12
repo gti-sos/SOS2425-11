@@ -1,10 +1,7 @@
 <script>
 
-
-    // import { path } from 'express/lib/application'; // Eliminada esta línea
     import { onMount } from 'svelte';
 
-    // Define aquí las integraciones específicas de tu carpeta EBT
     const otherIntegrations = [
         {
             name: 'G10 - Estadísticas de Registros (Radar con chart.js)',
@@ -79,18 +76,18 @@
     }
 
     h1 {
-        color: #1a2b48; /* Azul oscuro */
+        color: #1a2b48; 
         text-align: center;
         margin-bottom: 25px;
         font-size: 2em;
     }
 
     h2 {
-        color: #2c3e50; /* Azul grisáceo */
+        color: #2c3e50; 
         margin-top: 35px;
         margin-bottom: 15px;
         padding-bottom: 8px;
-        border-bottom: 2px solid #eaecee; /* Gris claro */
+        border-bottom: 2px solid #eaecee; 
         font-size: 1.5em;
     }
 
@@ -107,26 +104,26 @@
 
     li {
         margin-bottom: 10px;
-        background-color: #f8f9fa; /* Gris muy claro */
+        background-color: #f8f9fa; 
         border-radius: 6px;
         transition: background-color 0.2s ease-in-out;
     }
 
     li:hover {
-        background-color: #e9ecef; /* Gris un poco más oscuro al pasar el ratón */
+        background-color: #e9ecef; 
     }
 
     a {
         display: block;
         padding: 12px 18px;
         text-decoration: none;
-        color: #007bff; /* Azul brillante */
+        color: #007bff; 
         font-weight: 500;
         font-size: 1.1em;
         transition: color 0.2s ease-in-out;
     }
 
     a:hover {
-        color: #0056b3; /* Azul más oscuro al pasar el ratón */
+        color: #0056b3; 
     }
 </style>

@@ -1,18 +1,16 @@
 <script>
     import { onMount } from 'svelte';
-    import { goto } from '$app/navigation'; // Importar goto para la navegación
-    import { page } from '$app/stores'; // Importar store de página para leer query params
+    import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
 
-    // URL de la API actualizada
     const API_URL = '/api/v1/social-pension-payrolls';
 
     let resources = [];
     let isLoading = true;
-    let apiError = null; // Para errores generales de carga o conexión
-    let successMessage = null; // Para mensajes de éxito de operaciones
-    let errorMessage = null; // Para errores específicos de operaciones (Crear, Borrar, Editar)
+    let apiError = null;
+    let successMessage = null;
+    let errorMessage = null;
 
-    // Estado para el formulario de creación actualizado
     let newResource = {
         place: '',
         year: null,
@@ -22,10 +20,9 @@
         disability_number: null
     };
 
-    // Estado para los filtros de búsqueda actualizado
     let searchFilters = {
         place: '',
-        year: null, // Búsqueda exacta por año
+        year: null,
         from: null,
         to: null,
         retirement_amountOver: null,
@@ -38,100 +35,66 @@
         disability_numberUnder: null
     };
 
-    // Datos de ejemplo actualizados con la estructura real
-    const exampleResources = [
-        {
-            place: 'Andalucía (Ejemplo)',
-            year: 2025,
-            retirement_amount: 410000000.0,
-            disability_amount: 310000000.0,
-            retirement_number: 56000,
-            disability_number: 37000
-        },
-        {
-            place: 'Cataluña (Ejemplo)',
-            year: 2025,
-            retirement_amount: 350000000.0,
-            disability_amount: 290000000.0,
-            retirement_number: 54000,
-            disability_number: 38000
-        }
-    ];
-
     // --- Funciones de API ---
     async function fetchResources(searchParams = '', preserveMessages = false) {
         isLoading = true;
-        // Clear general API error unless preserving messages from a previous action
         if (!preserveMessages) {
             apiError = null;
-            // Also clear action-specific messages if not preserving
             successMessage = null;
             errorMessage = null;
         } else {
-            // If preserving, clear only the general apiError,
-            // let success/error messages from actions persist for this render cycle.
-            apiError = null;
+            apiError = null; // Clear previous apiError if preserving other messages
         }
 
         try {
             const response = await fetch(`${API_URL}${searchParams}`);
             if (!response.ok) {
-                // If fetch fails now, clear any preserved success message
                 if (preserveMessages) successMessage = null;
+                resources = []; // Ensure resources are empty on error
                 if (response.status === 404) {
                     if (!searchParams) {
                         apiError =
-                            'No se pudieron cargar los datos. Es posible que no haya registros o haya un problema de conexión. Se muestran datos de ejemplo.';
-                        resources = exampleResources;
+                            'No se pudieron cargar los datos. Es posible que no haya registros. Puede añadir nuevos o cargar datos iniciales.';
                     } else {
                         apiError =
-                            'No se encontraron registros que coincidan con tu búsqueda. Se muestran datos de ejemplo.';
-                        resources = exampleResources;
+                            'No se encontraron registros que coincidan con tu búsqueda.';
                     }
                     console.warn(`API returned 404 for ${API_URL}${searchParams}`);
                 } else {
-                    // Otro tipo de error HTTP
-                    apiError = `Error al cargar: Problema de comunicación con el servidor (Código: ${response.status}). Se muestran datos de ejemplo.`;
+                    apiError = `Error al cargar: Problema de comunicación con el servidor (Código: ${response.status}). La tabla puede estar vacía.`;
                     console.error(`HTTP Error ${response.status}: ${response.statusText}`);
-                    resources = exampleResources; // Mostrar ejemplos en caso de error
                 }
             } else {
-                // If fetch succeeds now, clear any preserved error message
                 if (preserveMessages) errorMessage = null;
                 const data = await response.json();
-                resources = Array.isArray(data) ? data : [data]; // Asegurarse de que siempre sea un array
+                resources = Array.isArray(data) ? data : [data];
                 if (resources.length === 0 && !searchParams) {
-                    // Don't overwrite a success/error message if we are preserving it
                     if (!preserveMessages) {
-                        apiError = 'No hay registros disponibles. Puedes empezar añadiendo uno nuevo.';
+                        apiError = 'No hay registros disponibles. Puedes empezar añadiendo uno nuevo o cargar datos iniciales.';
                     }
                 } else if (resources.length === 0 && searchParams) {
-                    // Mensaje específico si la búsqueda no devuelve resultados pero la conexión fue OK
                     if (!preserveMessages) {
                         apiError = 'No se encontraron registros que coincidan con los filtros aplicados.';
                     }
                 }
             }
         } catch (err) {
-            // If fetch fails due to network/parsing, clear any preserved success message
             if (preserveMessages) successMessage = null;
-            // Error de red o al procesar la respuesta
             apiError =
-                'Error al cargar los datos: No se pudo conectar con el servidor o procesar la respuesta. Se muestran datos de ejemplo.';
+                'Error al cargar los datos: No se pudo conectar con el servidor o procesar la respuesta. La tabla puede estar vacía.';
             console.error('Fetch error:', err);
-            resources = exampleResources;
+            resources = []; // Ensure resources are empty on fetch error
         } finally {
             isLoading = false;
         }
     }
 
     async function handleCreate(event) {
-        event.preventDefault(); // Prevenir recarga de página por defecto del form
+        event.preventDefault();
         errorMessage = null;
         successMessage = null;
         isLoading = true;
         try {
-            // Convertir a números o null
             const payload = {
                 ...newResource,
                 year: parseInt(newResource.year) || null,
@@ -141,7 +104,6 @@
                 disability_number: parseInt(newResource.disability_number) || null
             };
 
-            // Validar que los campos requeridos no sean null después de la conversión
             if (
                 !payload.place ||
                 payload.year === null ||
@@ -165,8 +127,7 @@
             });
 
             if (response.status === 201) {
-                successMessage = 'El registro se ha añadido correctamente.'; // Set message FIRST
-                // Limpiar formulario
+                successMessage = 'El registro se ha añadido correctamente.';
                 newResource = {
                     place: '',
                     year: null,
@@ -175,7 +136,7 @@
                     retirement_number: null,
                     disability_number: null
                 };
-                await fetchResources(undefined, true); // Recargar la lista, PRESERVING the message
+                await fetchResources(undefined, true);
             } else if (response.status === 400) {
                 errorMessage =
                     'Error al añadir: Los datos proporcionados no son válidos. Por favor, revísalos.';
@@ -192,12 +153,7 @@
                 'Error al añadir: Ocurrió un problema de conexión al intentar guardar el registro. Inténtalo de nuevo más tarde.';
             console.error('Create error:', err);
         } finally {
-            // Only set isLoading to false if no success message was set,
-            // otherwise fetchResources will handle it after reloading.
-            // This prevents the create button from being briefly re-enabled before reload starts.
-            if (!successMessage) {
-                isLoading = false;
-            }
+            isLoading = false;
         }
     }
 
@@ -214,9 +170,9 @@
                 const response = await fetch(`${API_URL}/${encodeURIComponent(place)}/${year}`, {
                     method: 'DELETE'
                 });
-                if (response.status === 204 || response.status === 200) { // 200 OK is also common for DELETE
-                    successMessage = `El registro de ${place} (${year}) se ha borrado correctamente.`; // Set message FIRST
-                    await fetchResources(undefined, true); // Recargar la lista, PRESERVING the message
+                if (response.status === 204 || response.status === 200) {
+                    successMessage = `El registro de ${place} (${year}) se ha borrado correctamente.`;
+                    await fetchResources(undefined, true);
                 } else if (response.status === 404) {
                     errorMessage = 'Error al borrar: No se pudo encontrar el registro que intentas eliminar.';
                 } else {
@@ -228,17 +184,12 @@
                     'Error al borrar: Ocurrió un problema de conexión al intentar eliminar el registro. Inténtalo de nuevo más tarde.';
                 console.error('Delete error:', err);
             } finally {
-                // Only set isLoading to false if no success message was set.
-                if (!successMessage) {
-                    isLoading = false;
-                }
+                isLoading = false;
             }
         }
     }
 
     async function handleDeleteAll() {
-        errorMessage = null;
-        successMessage = null;
         if (
             window.confirm(
                 '¿Estás seguro de que quieres borrar TODOS los registros? Esta acción no se puede deshacer.'
@@ -250,12 +201,11 @@
                     method: 'DELETE'
                 });
                 if (response.status === 204 || response.status === 200) {
-                    successMessage = 'Todos los registros se han borrado correctamente.'; // Set message FIRST
-                    await fetchResources(undefined, true); // Recargar la lista, PRESERVING the message
+                    successMessage = 'Todos los registros se han borrado correctamente.';
+                    await fetchResources(cacheBustQuery, true);
                 } else if (response.status === 404) {
-                    // Consider this informational rather than an error.
-                    successMessage = 'No había registros para borrar.';
-                    await fetchResources(); // Fetch again to show empty state correctly
+                    successMessage = 'No había registros para borrar.'; // Considered success/info
+                    await fetchResources(undefined, true);
                 } else {
                     errorMessage = `Error al borrar todo: Problema inesperado en el servidor (Código: ${response.status}). Inténtalo de nuevo.`;
                     console.error(`Error ${response.status}: ${response.statusText}`);
@@ -263,35 +213,45 @@
             } catch (err) {
                 errorMessage =
                     'Error al borrar todo: Ocurrió un problema de conexión al intentar eliminar todos los registros. Inténtalo de nuevo más tarde.';
+                errorMessage =
+                    'Error al borrar todo: Ocurrió un problema de conexión al intentar eliminar todos los registros. Inténtalo de nuevo más tarde.';
                 console.error('Delete All error:', err);
             } finally {
-                // Only set isLoading to false if no success message was set.
-                if (!successMessage) {
-                    isLoading = false;
-                }
+                isLoading = false;
             }
         }
     }
 
-    // Navega a la página de edición
-    function handleEdit(place, year) {
-        // Clear messages before navigating away
-        successMessage = null;
+    async function loadInitialData() {
+        isLoading = true;
         errorMessage = null;
-        apiError = null;
-        goto(`/EBT/edit/${encodeURIComponent(place)}/${year}`);
+        successMessage = null;
+
+        try {
+            const response = await fetch(`${API_URL}/loadInitialData`, {
+            });
+
+            if (response.ok) { // 200 or 201
+                successMessage = 'Datos iniciales cargados correctamente.';
+                await fetchResources(undefined, true); 
+            } else if (response.status === 409) {
+                errorMessage = 'Error al cargar datos iniciales: Los datos ya existen o ya han sido cargados.';
+            } else {
+                const errorText = await response.text().catch(() => "No se pudo leer el cuerpo del error.");
+                errorMessage = `Error al cargar datos iniciales: Problema en el servidor (Código: ${response.status}). ${errorText}`;
+                console.error(`LoadInitialData Error ${response.status}: ${errorText}`);
+            }
+        } catch (err) {
+            errorMessage = 'Error al cargar datos iniciales: Problema de conexión. Inténtalo de nuevo más tarde.';
+            console.error('LoadInitialData fetch/network error:', err);
+        } finally {
+            isLoading = false;
+        }
     }
 
-    // --- Funciones de Búsqueda ---
-    function handleSearch() {
-        // Clear previous messages when starting a new search
-        errorMessage = null;
-        successMessage = null;
-        apiError = null;
-
+    function handleEdit(place, year) {
         const params = new URLSearchParams();
 
-        // Añadir parámetros solo si tienen valor
         if (searchFilters.place) params.set('place', searchFilters.place.trim());
         if (searchFilters.year) params.set('year', searchFilters.year);
         if (searchFilters.retirement_amountOver)
@@ -315,11 +275,10 @@
 
         const queryString = params.toString() ? `?${params.toString()}` : '';
         console.log(`Buscando con query: ${queryString}`);
-        fetchResources(queryString); // Don't preserve messages on manual search
+        fetchResources(queryString);
     }
 
     function clearSearch() {
-        // Resetear todos los filtros
         searchFilters = {
             place: '',
             year: null,
@@ -334,17 +293,14 @@
             disability_numberOver: null,
             disability_numberUnder: null
         };
-        // Clear messages when clearing search
         errorMessage = null;
         successMessage = null;
         apiError = null;
-        fetchResources(); // Cargar todos los recursos
+        fetchResources();
     }
 
-    // Cargar los recursos iniciales y chequear mensajes de query params
     onMount(() => {
         let messageSetFromUrl = false;
-        // Check for messages passed via query parameters (e.g., after edit)
         const urlParams = $page.url.searchParams;
         const messageCode = urlParams.get('message');
         const placeParam = urlParams.get('place');
@@ -358,14 +314,11 @@
             messageSetFromUrl = true;
         }
 
-        // Clean the URL query parameters if a message was processed
         if (messageSetFromUrl) {
-            const cleanUrl = $page.url.pathname; // Get path without query string
-            // Use replaceState to avoid adding to browser history
+            const cleanUrl = $page.url.pathname;
             history.replaceState(history.state, '', cleanUrl);
         }
 
-        // Fetch initial data, preserving the message if it was just set from the URL
         fetchResources('', messageSetFromUrl);
     });
 </script>
@@ -448,7 +401,6 @@
                         required
                         class="input-style mt-1 block w-full"
                         placeholder="Ej: Andalucía"
-                        disabled={isLoading}
                     />
                 </div>
                 <div>
@@ -460,7 +412,6 @@
                         required
                         placeholder="YYYY"
                         class="input-style mt-1 block w-full"
-                        disabled={isLoading}
                     />
                 </div>
                 <div>
@@ -475,7 +426,6 @@
                         required
                         class="input-style mt-1 block w-full"
                         placeholder="Ej: 410000000.00"
-                        disabled={isLoading}
                     />
                 </div>
                 <div>
@@ -490,7 +440,6 @@
                         required
                         class="input-style mt-1 block w-full"
                         placeholder="Ej: 310000000.00"
-                        disabled={isLoading}
                     />
                 </div>
                 <div>
@@ -504,7 +453,6 @@
                         required
                         class="input-style mt-1 block w-full"
                         placeholder="Ej: 56000"
-                        disabled={isLoading}
                     />
                 </div>
                 <div>
@@ -518,41 +466,15 @@
                         required
                         class="input-style mt-1 block w-full"
                         placeholder="Ej: 37000"
-                        disabled={isLoading}
                     />
                 </div>
                 <div class="flex items-end justify-end md:col-span-3">
                     <button
                         type="submit"
                         class="transform rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-2 font-bold text-white shadow-md transition duration-150 ease-in-out hover:scale-105 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
-                        disabled={isLoading}
+                        
                     >
-                        {#if isLoading && !successMessage && !errorMessage && !apiError}
-                            <!-- Show spinner only during active loading state initiated by this form -->
-                            <svg
-                                class="mr-2 inline h-4 w-4 animate-spin text-white"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    class="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    stroke-width="4"
-                                ></circle>
-                                <path
-                                    class="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
-                            Creando...
-                        {:else}
                             Crear Registro
-                        {/if}
                     </button>
                 </div>
             </div>
@@ -707,7 +629,7 @@
                     </div>
                 </fieldset>
 
-                <!-- Botones de Búsqueda -->
+                <!-- Botones de Búsqueda y Acciones -->
                 <div
                     class="flex flex-col items-stretch gap-3 sm:col-span-2 md:col-span-3 lg:col-span-4 lg:flex-row lg:items-end lg:justify-start"
                 >
@@ -726,8 +648,15 @@
                     >
                         Limpiar Filtros
                     </button>
+                     <button
+                        class="transform rounded-lg bg-teal-500 px-6 py-2 font-bold text-white shadow-md transition duration-150 ease-in-out hover:scale-105 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50"
+                        on:click={loadInitialData}
+                        disabled={(resources.length > 0 && !apiError)}
+                        title="Cargar datos iniciales en la base de datos (deshabilitado si ya hay datos o error)">
+                        Cargar Datos Iniciales
+                    </button>
                     <button
-                        class="ml-auto transform rounded-lg bg-gradient-to-r from-red-500 to-rose-600 px-6 py-2 font-bold text-white shadow-md transition duration-150 ease-in-out hover:scale-105 hover:from-red-600 hover:to-rose-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 lg:ml-auto"
+                        class="transform rounded-lg bg-gradient-to-r from-red-500 to-rose-600 px-6 py-2 font-bold text-white shadow-md transition duration-150 ease-in-out hover:scale-105 hover:from-red-600 hover:to-rose-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 lg:ml-auto"
                         on:click={handleDeleteAll}
                         disabled={isLoading}
                     >
@@ -737,32 +666,7 @@
             </div>
         </div>
 
-        {#if isLoading && !apiError && !errorMessage && !successMessage}
-            <!-- Show general loading indicator only when no other message is present -->
-            <div class="my-8 flex items-center justify-center text-center text-lg text-gray-600">
-                <svg
-                    class="mr-3 h-6 w-6 animate-spin text-blue-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                >
-                    <circle
-                        class="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="4"
-                    ></circle>
-                    <path
-                        class="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                </svg>
-                Cargando registros...
-            </div>
-        {/if}
+        
 
         <!-- Tabla de Recursos -->
         <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
@@ -849,9 +753,8 @@
                             <tr>
                                 <td colspan="7" class="px-6 py-10 text-center text-gray-500">
                                     {#if !isLoading && !apiError && !successMessage && !errorMessage}
-                                        <!-- Show this only if not loading and no other messages are displayed -->
-                                        No hay registros para mostrar. Puede añadir nuevos registros o buscar con
-                                        otros criterios.
+                                        No hay registros para mostrar. Puede añadir nuevos registros, buscar con
+                                        otros criterios o cargar datos iniciales usando el botón correspondiente.
                                     {/if}
                                 </td>
                             </tr>
@@ -864,56 +767,60 @@
 </main>
 
 <style>
-    /* Estilos reutilizados para inputs y selects */
     .input-style {
-        border-radius: 0.375rem; /* rounded-md */
+        border-radius: 0.375rem; 
         border-width: 1px;
-        border-color: #d1d5db; /* border-gray-300 */
-        padding: 0.5rem 0.75rem; /* py-2 px-3 */
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
-        font-size: 0.875rem; /* text-sm */
+        border-color: #d1d5db; 
+        padding: 0.5rem 0.75rem; 
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+        font-size: 0.875rem; 
         line-height: 1.25rem;
         transition:
             border-color 0.15s ease-in-out,
             box-shadow 0.15s ease-in-out;
-        appearance: none; /* Remove default styling for select */
+        
+        appearance: none;
         background-color: white;
     }
     .input-style:focus {
         outline: 2px solid transparent;
         outline-offset: 2px;
-        border-color: #6366f1; /* focus:border-indigo-500 */
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* focus:ring-indigo-500 focus:ring-opacity-50 */
+        border-color: #6366f1; 
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); 
     }
-    /* Add dropdown arrow for selects using this style */
+    
     select.input-style {
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
         background-position: right 0.5rem center;
         background-repeat: no-repeat;
         background-size: 1.5em 1.5em;
-        padding-right: 2.5rem; /* Make space for the arrow */
+        
+        padding-right: 2.5rem;
     }
-    /* Style disabled state */
+    
     .input-style:disabled,
     button:disabled {
         cursor: not-allowed;
         opacity: 0.6;
     }
     .input-style:disabled {
-        background-color: #f3f4f6; /* bg-gray-100 */
+        background-color: #f3f4f6; 
     }
     button:disabled {
-        transform: none !important; /* Disable hover scale effect */
+        
+        transform: none !important;
     }
 
-    /* Improve fieldset legend styling */
+    
     fieldset {
         transition: border-color 0.2s ease-in-out;
     }
     fieldset:focus-within {
-        border-color: #6366f1; /* Highlight fieldset when child input is focused */
+        
+        border-color: #6366f1;
     }
     legend {
-        color: #4b5563; /* gray-600 */
+        color: #4b5563;
     }
 </style>
+

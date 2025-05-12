@@ -84,20 +84,18 @@
                 throw new Error("No se encontraron datos de población válidos de API Ninjas (el array 'years' está vacío después del procesamiento).");
             }
 
-            // --- CAMBIO AQUÍ: Definición de la traza para un gráfico de barras ---
             const populationTrace = {
                 x: years,
                 y: populations,
                 name: 'Población España (API Ninjas)',
-                type: 'bar' // Cambiado de 'scatter' a 'bar'
-                // Ya no necesitamos 'mode: lines+markers' para el tipo 'bar'
+                type: 'bar' 
             };
 
             const newLayout = { 
-                title: 'Población en España por Año (Datos de API Ninjas)', // Título ligeramente ajustado
+                title: 'Población en España por Año (Datos de API Ninjas)', 
                 xaxis: { 
                     title: 'Año',
-                    type: 'category' // Mantenemos el eje X como categórico para los años
+                    type: 'category' 
                 },
                 yaxis: { 
                     title: 'Población Total (Personas)',

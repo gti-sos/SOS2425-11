@@ -65,13 +65,12 @@
             const indicators = [];
             const dateText = formatDate(latestData.date);
 
-            // --- Extraer mes y año para el título ---
+            // Extraer mes y año para el título
             const dateStr = latestData.date.toString();
             const year = dateStr.substring(0, 4);
             const monthNumber = parseInt(dateStr.substring(4, 6), 10);
             const monthName = getMonthName(monthNumber);
             const dynamicTitle = `Indicadores COVID-19 EEUU (${monthName} ${year})`;
-            // --- Fin de extracción para el título ---
 
 
             indicators.push({

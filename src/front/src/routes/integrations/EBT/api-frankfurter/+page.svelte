@@ -9,12 +9,9 @@
     let layoutForPlot = null;
     let traceDataForPlot = null;
 
-    // Estas constantes ahora son más para la descripción o si quieres mostrarlas en el UI,
-    // ya que el proxy define qué se solicita.
     const BASE_CURRENCY_DISPLAY = 'EUR';
-    const TARGET_CURRENCIES_DISPLAY = ['USD', 'GBP', 'JPY']; 
+    const TARGET_CURRENCIES_DISPLAY = ['USD', 'GBP']; 
     
-    // getFormattedDate ya no es necesaria aquí si el proxy maneja las fechas
 
     async function fetchDataAndPrepareChartData() {
         if (!browser) { 
@@ -28,8 +25,7 @@
         layoutForPlot = null;
 
         try {
-            // URL del proxy de SvelteKit con la solicitud fija
-            const svelteKitProxyUrl = `/api/frankfurter-proxy`; // Apunta a tu nuevo proxy fijo
+            const svelteKitProxyUrl = `/api/frankfurter-proxy`;
             
             console.log("Solicitando a SvelteKit Fixed Proxy para Frankfurter:", svelteKitProxyUrl);
             const response = await fetch(svelteKitProxyUrl); 
@@ -40,7 +36,7 @@
                 try {
                     const errJson = JSON.parse(errText);
                     detail = errJson.message || errText;
-                } catch(e) { /* no es json */ }
+                } catch(e) {}
                 console.error("SvelteKit Fixed Proxy (Frankfurter) response error text:", detail);
                 throw new Error(`Error fetching currency data via SvelteKit fixed proxy: ${response.status} - ${detail}`);
             }
@@ -55,9 +51,6 @@
             const dates = Object.keys(currencyData.rates).sort();
             const traces = [];
 
-            // Asumimos que el proxy devuelve las monedas que esperamos (USD, GBP, JPY)
-            // Si el proxy cambia las monedas, esta parte necesitaría ser más dinámica
-            // o simplemente usar TARGET_CURRENCIES_DISPLAY si coincide con lo que el proxy pide.
             const actualTargetCurrencies = currencyData.rates[dates[0]] ? Object.keys(currencyData.rates[dates[0]]) : TARGET_CURRENCIES_DISPLAY;
 
 

@@ -290,36 +290,35 @@
 </main>
 
 <style>
-    /* Estilos reutilizados y mejorados para inputs */
     .input-style {
-        border-radius: 0.375rem; /* rounded-md */
-        border: 1px solid #d1d5db; /* border-gray-300 */
-        padding: 0.5rem 0.75rem; /* px-3 py-2 */
+        border-radius: 0.375rem; 
+        border: 1px solid #d1d5db; 
+        padding: 0.5rem 0.75rem; 
         background-color: white;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
-        font-size: 0.875rem; /* text-sm */
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+        font-size: 0.875rem; 
         line-height: 1.25rem;
-        color: #111827; /* text-gray-900 */
+        color: #111827; 
         transition:
             border-color 0.15s ease-in-out,
             box-shadow 0.15s ease-in-out;
     }
     .input-style::placeholder {
-        color: #9ca3af; /* placeholder-gray-400 */
+        color: #9ca3af; 
     }
     .input-style:focus {
         outline: 2px solid transparent;
         outline-offset: 2px;
-        border-color: #4f46e5; /* focus:border-indigo-600 */
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3); /* focus:ring-indigo-600/30 */
+        border-color: #4f46e5; 
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3); 
     }
-    /* Remove spinners from number inputs */
+    
     .input-style[type='number']::-webkit-inner-spin-button,
     .input-style[type='number']::-webkit-outer-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
     .input-style[type='number'] {
-        -moz-appearance: textfield; /* Firefox */
+        -moz-appearance: textfield; 
     }
 </style>
