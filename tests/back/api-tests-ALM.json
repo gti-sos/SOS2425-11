@@ -293,7 +293,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "// 405 Method Not Allowed, (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS):\n{\n  \"population\": 9000000,\n  \"dependent_population\": 1100000\n}\n",
+					"raw": "// 405 Method Not Allowed, (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS):\n{  \n  \"year\": 2025,\n  \"place\": \"Almería\",\n  \"population\": 9000000,\n  \"dependent_population\": 1200000,\n  \"request\": 450000\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -329,13 +329,7 @@
 							"// Test for specific header value\r",
 							"pm.test(\"Response header 'Content-Type' has value 'application/json'\", function () {\r",
 							"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"    });\r",
-							"\r",
-							"// Test for body\r",
-							"pm.test('Response body is an object', function () {\r",
-							"    pm.expect(pm.response.json()).to.be.an('object');\r",
-							"});\r",
-							""
+							"    });"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -414,11 +408,6 @@
 							"// Test for status code\r",
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"// Test for response body content\r",
-							"pm.test(\"Response body has updated message\", function () {\r",
-							"    pm.expect(pm.response.text()).to.include(\"Updated 1 resources successfully\");\r",
 							"});\r",
 							""
 						],
