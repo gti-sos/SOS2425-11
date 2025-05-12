@@ -96,7 +96,13 @@
 				>
 			</li>
 			<li>Eduardo Becerra Tomé: (Link to video)</li>
-			<li>Mario Tur Pantión: (Link to video)</li>
+			<li>
+				Mario Tur Pantión: <a
+				href="https://youtu.be/3zcTfa7vEIA"
+				target="_blank"
+				rel="noopener noreferrer">View Video</a
+				>
+			</li>
 		</ul>
 	</section>
 
