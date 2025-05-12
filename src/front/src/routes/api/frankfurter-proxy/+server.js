@@ -21,11 +21,9 @@ export async function GET({ fetch }) {
     const formattedStartDate = getFormattedDate(startDate);
     const formattedEndDate = getFormattedDate(endDate);
 
-    // Construir la URL fija para la API externa
     const fixedApiEndpoint = `${formattedStartDate}..${formattedEndDate}?from=${baseCurrency}&to=${targetCurrencies.join(',')}`;
     const targetUrl = `${frankfurterApiBaseUrl}/${fixedApiEndpoint}`;
-    // Ejemplo de targetUrl: https://api.frankfurter.app/2024-04-11..2024-05-11?from=EUR&to=USD,GBP,JPY
-    // --- Fin de la definición de la solicitud fija ---
+
 
     console.log(`[SvelteKit Fixed Proxy] Forwarding request to Frankfurter API: ${targetUrl}`);
 
