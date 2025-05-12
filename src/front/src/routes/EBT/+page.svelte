@@ -36,6 +36,51 @@
     };
 
     // --- Funciones de API ---
+    async function handleSearch() {
+        const params = new URLSearchParams();
+
+        if (searchFilters.place && searchFilters.place.trim() !== '') {
+            params.set('place', searchFilters.place.trim());
+        }
+        if (searchFilters.year !== null && searchFilters.year !== '') {
+            params.set('year', searchFilters.year);
+        }
+        if (searchFilters.from !== null && searchFilters.from !== '') {
+            params.set('from', searchFilters.from);
+        }
+        if (searchFilters.to !== null && searchFilters.to !== '') {
+            params.set('to', searchFilters.to);
+        }
+        if (searchFilters.retirement_amountOver !== null && searchFilters.retirement_amountOver !== '') {
+            params.set('retirement_amountOver', searchFilters.retirement_amountOver);
+        }
+        if (searchFilters.retirement_amountUnder !== null && searchFilters.retirement_amountUnder !== '') {
+            params.set('retirement_amountUnder', searchFilters.retirement_amountUnder);
+        }
+        if (searchFilters.disability_amountOver !== null && searchFilters.disability_amountOver !== '') {
+            params.set('disability_amountOver', searchFilters.disability_amountOver);
+        }
+        if (searchFilters.disability_amountUnder !== null && searchFilters.disability_amountUnder !== '') {
+            params.set('disability_amountUnder', searchFilters.disability_amountUnder);
+        }
+        if (searchFilters.retirement_numberOver !== null && searchFilters.retirement_numberOver !== '') {
+            params.set('retirement_numberOver', searchFilters.retirement_numberOver);
+        }
+        if (searchFilters.retirement_numberUnder !== null && searchFilters.retirement_numberUnder !== '') {
+            params.set('retirement_numberUnder', searchFilters.retirement_numberUnder);
+        }
+        if (searchFilters.disability_numberOver !== null && searchFilters.disability_numberOver !== '') {
+            params.set('disability_numberOver', searchFilters.disability_numberOver);
+        }
+        if (searchFilters.disability_numberUnder !== null && searchFilters.disability_numberUnder !== '') {
+            params.set('disability_numberUnder', searchFilters.disability_numberUnder);
+        }
+        
+        const queryString = params.toString() ? `?${params.toString()}` : '';
+        console.log(`Buscando con query: ${queryString}`);
+        fetchResources(queryString); // Llama a fetchResources con los nuevos parámetros
+    }
+
     async function fetchResources(searchParams = '', preserveMessages = false) {
         isLoading = true;
         if (!preserveMessages) {
