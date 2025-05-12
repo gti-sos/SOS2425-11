@@ -390,7 +390,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Sevilla",
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Murcia",
 					"host": [
 						"{{BASE_URL}}{{RESOURCE_MTP}}"
 					],
@@ -494,7 +494,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Sevilla",
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Murcia",
 					"host": [
 						"{{BASE_URL}}{{RESOURCE_MTP}}"
 					],
@@ -633,7 +633,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Sevilla/2024",
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Murcia/2024",
 					"host": [
 						"{{BASE_URL}}{{RESOURCE_MTP}}"
 					],
@@ -765,7 +765,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Sevilla",
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Murcia",
 					"host": [
 						"{{BASE_URL}}{{RESOURCE_MTP}}"
 					],
@@ -802,7 +802,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Cadiz/2024",
+					"raw": "{{BASE_URL}}{{RESOURCE_MTP}}/Canarias/2024",
 					"host": [
 						"{{BASE_URL}}{{RESOURCE_MTP}}"
 					],
