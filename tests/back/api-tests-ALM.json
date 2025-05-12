@@ -265,52 +265,6 @@
 			"response": []
 		},
 		{
-			"name": "Put to list of resources",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"// Test for the response code to ensure it's a valid PUT request",
-							"pm.test(\"Status code is 405\", function () {",
-							"    pm.response.to.have.status(405);",
-							"});",
-							"",
-							"// Test for the response body to ensure it contains the correct error message",
-							"pm.test(\"Response body contains error message\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"Method not allowed. Cannot PUT to a list of resources\");",
-							"});",
-							"",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "// 405 Method Not Allowed, (NO SE PUEDE HACER PUT A UNA LISTA DE RECURSOS):\n{  \n  \"year\": 2025,\n  \"place\": \"Almería\",\n  \"population\": 9000000,\n  \"dependent_population\": 1200000,\n  \"request\": 450000\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{BASE_URL}}{{RESOURCE_ALM}}",
-					"host": [
-						"{{BASE_URL}}{{RESOURCE_ALM}}"
-					]
-				},
-				"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
-			},
-			"response": []
-		},
-		{
 			"name": "Get specific resource (place)",
 			"event": [
 				{
