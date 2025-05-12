@@ -1,9 +1,9 @@
-import {env} from '$env/dynamic/private'; // Para acceder a variables de entorno privadas
+import { API_NINJAS_KEY } from '$env/static/private'; 
 
 export async function GET({ fetch }) {
     const apiNinjasUrl = `https://api.api-ninjas.com/v1/population?country=Spain`;
     
-    const apiKey = env.API_NINJAS_KEY;
+    const apiKey = API_NINJAS_KEY;
 
     if (!apiKey) {
         console.error('API_NINJAS_KEY no está configurada en las variables de entorno.');
