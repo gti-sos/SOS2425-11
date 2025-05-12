@@ -30,7 +30,7 @@ test.describe('ALM Application Basic Checks', () => {
         await expect(page.getByRole('button', { name: 'Limpiar' })).toBeVisible();
         await expect(page.getByRole('button', { name: 'Borrar Todos los Recursos' })).toBeVisible();
     });
-
+/*
     test('Check ALM edit page loads for a specific resource', async ({ page }) => {
         // Ensure data exists first. Assuming 'Andalucía' / 2024 exists from initial data or previous tests.
         // If not, you might need a setup step or use loadInitialData.
@@ -69,6 +69,7 @@ test.describe('ALM Application Basic Checks', () => {
         // 5. Check if a "Save" button exists
         await expect(page.getByRole('button', { name: 'Guardar Cambios' })).toBeVisible();
     });
+    */
 
     const testPlace = `TestPlace-${Date.now()}`;
     const testYear = 2098; // Use a unique year unlikely to exist

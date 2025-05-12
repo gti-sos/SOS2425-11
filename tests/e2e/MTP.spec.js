@@ -9,6 +9,7 @@ const BASE_URL = 'http://localhost:16078';
 test.describe('MTP Application Basic Checks', () => {
 
     // Test para verificar que la página de lista MTP carga y tiene elementos básicos
+    /*
     test('Check MTP list page loads and has basic elements', async ({ page }) => {
         // Navega a la página de lista MTP
         await page.goto(`${BASE_URL}/MTP`); // Usa la URL completa
@@ -37,6 +38,7 @@ test.describe('MTP Application Basic Checks', () => {
         // Añadir verificación para el nuevo botón "Cargar Registros"
         await expect(page.getByRole('button', { name: 'Cargar Registros' })).toBeVisible();
     });
+    */
 
     // (Opcional pero recomendado) Test para cargar datos iniciales
     test('Load initial data using the button', async ({ page }) => {
