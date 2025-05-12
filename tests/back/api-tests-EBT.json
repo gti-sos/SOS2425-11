@@ -8,6 +8,45 @@
 	},
 	"item": [
 		{
+					"name": "Load Initial Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test for status code 201 (Created) or 200 (OK)",
+									"pm.test(\"Status code is 201 or 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"// Test for response body content",
+									"pm.test(\"Response body contains 'Data loaded' message\", function () {",
+									"    // This assumes the API responds with a message like 'Data loaded' or 'Initial data loaded successfully'",
+									"    // Adjust if your API has a different message for this operation",
+									"    pm.expect(pm.response.text()).to.include(\"Data loaded\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}{{RESOURCE_EBT}}/loadInitialData",
+							"host": [
+								"{{BASE_URL}}{{RESOURCE_EBT}}"
+							],
+							"path": [
+								"loadInitialData"
+							]
+						}
+					},
+					"response": []
+				},
+		{
 			"name": "GET all resources",
 			"event": [
 				{
